@@ -41,6 +41,12 @@
             "pages": [
               "skills/create-first-skill"
             ]
+          },
+          {
+            "group": "支援資源",
+            "pages": [
+              "skills/resources"
+            ]
           }
         ]
       }

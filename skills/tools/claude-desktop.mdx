@@ -64,15 +64,114 @@ Claude 桌面版的 Code 功能結合了 Claude 的強大能力和本地檔案�
 2. 開啟「Enable Code features」開關
 3. 授權 Claude 存取你的檔案系統
 
-### 步驟 3：設定工作目錄
+### 步驟 3：選擇資料來源
 
-1. 點擊「Add folder」或「新增資料夾」
-2. 選擇你想要 Claude 存取的專案資料夾
-3. 確認授權
+Claude 桌面版提供兩種方式來存取你的專案：
+
+<Tabs>
+  <Tab title="本地資料夾">
+    **適合**：已經在電腦上的專案
+
+    1. 點擊「Add folder」或「新增資料夾」
+    2. 選擇你想要 Claude 存取的專案資料夾
+    3. 確認授權
+
+    <Tip>
+    建議只授權你正在工作的專案資料夾，不要授權整個硬碟或家目錄。
+    </Tip>
+  </Tab>
+  <Tab title="GitHub 儲存庫">
+    **適合**：專案存放在 GitHub 上，或想要多裝置同步
+
+    串接 GitHub 後，你可以直接存取遠端儲存庫中的 Skill，不需要先 clone 到本地。
+  </Tab>
+</Tabs>
 
 <Warning>
-為了安全起見，Claude 只能存取你明確授權的資料夾。
+為了安全起見，Claude 只能存取你明確授權的資料夾或儲存庫。
 </Warning>
+
+---
+
+## 串接 GitHub 儲存庫
+
+如果你的 Skill 或專案存放在 GitHub 上，可以透過以下步驟串接：
+
+### 步驟 1：開啟 GitHub 連接設定
+
+1. 在 Claude 桌面版中，點擊右上角的 **設定**（齒輪圖示）
+2. 選擇 **Connections** 或 **連接** 區塊
+3. 找到 **GitHub** 選項
+
+### 步驟 2：授權 GitHub 帳號
+
+1. 點擊 **Connect GitHub** 或 **連接 GitHub**
+2. 系統會開啟瀏覽器，導向 GitHub 授權頁面
+3. 登入你的 GitHub 帳號（如果尚未登入）
+4. 檢視 Claude 請求的權限：
+   - **Read access** - 讀取儲存庫內容
+   - **Write access** - 修改檔案、建立 commit（選擇性）
+5. 點擊 **Authorize** 完成授權
+
+### 步驟 3：選擇要存取的儲存庫
+
+授權成功後：
+
+1. 回到 Claude 桌面版
+2. 在 GitHub 區塊中點擊 **Select repositories**
+3. 你可以選擇：
+   - **All repositories** - 存取所有儲存庫
+   - **Only select repositories** - 只存取特定儲存庫（建議）
+4. 勾選你要使用的儲存庫
+5. 點擊 **Save** 儲存設定
+
+<Info>
+**建議**：選擇「Only select repositories」並只勾選需要的專案，這樣更安全。
+</Info>
+
+### 步驟 4：在對話中使用
+
+連接成功後，你可以在對話中直接存取 GitHub 儲存庫：
+
+```
+請幫我查看 my-repo 專案中的 README.md
+```
+
+或使用儲存庫中的 Skill：
+
+```
+/my-custom-skill
+```
+
+### GitHub 串接的優點
+
+| 優點 | 說明 |
+|-----|------|
+| 多裝置同步 | 在不同電腦上都能存取相同的 Skill |
+| 不佔本地空間 | 不需要 clone 整個儲存庫 |
+| 版本控制 | 直接使用 GitHub 的版本管理 |
+| 團隊協作 | 團隊成員可以共享相同的 Skill |
+
+### 常見的 GitHub 串接問題
+
+<AccordionGroup>
+  <Accordion title="授權頁面沒有出現？">
+    - 確認瀏覽器沒有封鎖彈出視窗
+    - 嘗試手動前往 GitHub 並登出後重新授權
+  </Accordion>
+
+  <Accordion title="看不到我的儲存庫？">
+    - 確認該儲存庫是你有權限存取的
+    - 如果是組織的儲存庫，可能需要組織管理員批准
+    - 嘗試重新授權並選擇正確的儲存庫
+  </Accordion>
+
+  <Accordion title="如何取消 GitHub 連接？">
+    1. 前往 GitHub → Settings → Applications
+    2. 找到 Claude 並點擊 **Revoke**
+    3. 在 Claude 桌面版中重新連接（如需要）
+  </Accordion>
+</AccordionGroup>
 
 ---
 
