@@ -1,213 +1,263 @@
 ---
-title: "在 Codex CLI 中使用 Skill"
-description: "學習如何在 OpenAI Codex CLI 中使用 Skill 功能"
+title: "在 Codex 桌面版中使用 Skill"
+description: "學習如何在 OpenAI Codex 桌面版中使用 Skill 管理工具和 Automation 自動化功能"
 icon: "microchip"
 ---
 
-## 什麼是 Codex CLI？
+## 什麼是 Codex 桌面版？
 
-**Codex CLI** 是 OpenAI 推出的命令列工具，讓開發者可以在終端機中使用 AI 輔助功能。雖然 Codex 和 Claude 是不同的 AI 模型，但你可以在同一個工作環境中使用兩者。
+**Codex 桌面版**是 OpenAI 於 2026 年 2 月推出的 macOS 應用程式，被稱為「AI 代理的指揮中心」。它讓開發者可以同時管理多個 AI 編程代理，自動化重複性工作，並監督可獨立運行長達 30 分鐘的 AI 系統。
 
-<Warning>
-Codex CLI 和 Claude Code 是不同的工具。本頁說明如何在使用 Codex 的環境中搭配 Claude Code 的 Skill 功能。
-</Warning>
+<Info>
+**重點特色**：Codex 桌面版內建 **Skill 管理工具**和 **Automation 自動化功能**，讓你可以更有效率地使用 AI 輔助開發。
+</Info>
+
+---
+
+## 為什麼選擇 Codex 桌面版？
+
+| 特色 | 說明 |
+|-----|------|
+| Skill 管理工具 | 集中管理所有 Skill，一目了然 |
+| Automation 自動化 | 設定排程自動執行 Skill |
+| 多任務並行 | 同時執行多個 AI 代理 |
+| 跨平台同步 | 在 App、CLI、IDE 擴充功能間共享 Skill |
 
 ---
 
 ## 前置需求
 
 <Steps>
-  <Step title="安裝 Node.js">
-    需要 Node.js 18 或更新版本
-
-    [下載 Node.js](https://nodejs.org/)
+  <Step title="作業系統需求">
+    目前僅支援 **macOS**（Windows 版本即將推出）
   </Step>
-  <Step title="安裝 Codex CLI">
-    ```bash
-    npm install -g @openai/codex
-    ```
+  <Step title="訂閱方案">
+    需要以下任一 ChatGPT 訂閱：
+    - ChatGPT Plus
+    - ChatGPT Pro
+    - ChatGPT Business
+    - ChatGPT Enterprise
+    - ChatGPT Edu
   </Step>
-  <Step title="安裝 Claude Code">
-    ```bash
-    npm install -g @anthropic-ai/claude-code
-    ```
-  </Step>
-  <Step title="設定 API 金鑰">
-    需要分別設定 OpenAI 和 Anthropic 的 API 金鑰
+  <Step title="下載安裝">
+    前往 [OpenAI Codex 官網](https://openai.com/codex/) 下載桌面版
   </Step>
 </Steps>
 
 ---
 
-## 環境設定
+## Skill 管理工具
 
-### 設定 API 金鑰
+Codex 桌面版最棒的功能之一，就是內建的 **Skill 管理工具**。
 
-<Tabs>
-  <Tab title="macOS / Linux">
-    在 `~/.bashrc` 或 `~/.zshrc` 中加入：
+### 什麼是 Codex 的 Skill？
 
-    ```bash
-    # OpenAI（給 Codex 使用）
-    export OPENAI_API_KEY="sk-..."
+在 Codex 中，Skill 是將**指令、資源和腳本**打包在一起的組合，讓 Codex 能夠：
+- 可靠地連接到各種工具
+- 執行工作流程
+- 按照你或團隊的偏好完成任務
 
-    # Anthropic（給 Claude Code 使用）
-    export ANTHROPIC_API_KEY="sk-ant-..."
-    ```
+### 如何管理 Skill
 
-    然後執行：
-    ```bash
-    source ~/.bashrc  # 或 source ~/.zshrc
-    ```
-  </Tab>
-  <Tab title="Windows">
-    在 PowerShell 中設定：
+<Steps>
+  <Step title="開啟 Skill 管理介面">
+    在 Codex 桌面版中，點擊側邊欄的 **Skills** 標籤
+  </Step>
+  <Step title="瀏覽可用 Skill">
+    你可以看到：
+    - **已安裝的 Skill** - 目前可使用的 Skill
+    - **官方 Skill 庫** - OpenAI 提供的預設 Skill
+    - **自訂 Skill** - 你自己建立的 Skill
+  </Step>
+  <Step title="安裝或建立 Skill">
+    - 從官方庫點擊 **Install** 安裝
+    - 或點擊 **Create New** 建立自訂 Skill
+  </Step>
+</Steps>
 
-    ```powershell
-    # 設定環境變數
-    [Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-...", "User")
-    [Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-...", "User")
-    ```
+### 官方 Skill 庫
 
-    需要重新開啟 PowerShell 生效。
-  </Tab>
-</Tabs>
+OpenAI 提供了許多實用的官方 Skill：
 
----
+<CardGroup cols={2}>
+  <Card title="Figma 設計整合" icon="figma">
+    從 Figma 獲取設計稿內容，自動生成程式碼
+  </Card>
+  <Card title="Linear 專案管理" icon="list-check">
+    連接 Linear，管理任務和追蹤進度
+  </Card>
+  <Card title="雲端部署" icon="cloud-arrow-up">
+    一鍵部署到 Cloudflare、Vercel 等平台
+  </Card>
+  <Card title="文件生成" icon="file-pdf">
+    生成 PDF、Excel、Word 等專業文件
+  </Card>
+</CardGroup>
 
-## 同時使用 Codex 和 Claude Code
+### Skill 跨平台同步
 
-### 使用情境對比
-
-| 任務 | 推薦工具 | 原因 |
-|-----|---------|------|
-| 程式碼生成 | Codex | 擅長程式碼補全 |
-| 程式碼審查 | Claude Code | 提供更詳細的分析 |
-| Git 操作 | Claude Code | Skill 支援完整 |
-| 快速問答 | 兩者皆可 | 依個人偏好 |
-
-### 搭配使用範例
-
-#### 工作流程：開發新功能
-
-1. **使用 Codex 生成程式碼**
-   ```bash
-   codex "建立一個用戶登入的 API endpoint"
-   ```
-
-2. **使用 Claude Code 審查**
-   ```bash
-   claude "/review-code"
-   ```
-
-3. **使用 Claude Code 提交**
-   ```bash
-   claude "/commit"
-   ```
+<Tip>
+當你在桌面版建立新 Skill 後，它會自動同步到所有平台——包括 CLI、網頁版和 IDE 擴充功能。你可以在任何地方使用同一套 Skill。
+</Tip>
 
 ---
 
-## 建立整合腳本
+## Automation 自動化功能
 
-你可以建立一個整合腳本，結合兩個工具的優點：
+這是 Codex 桌面版最強大的功能——**Automation**。你可以設定排程，讓 Codex 在背景自動執行 Skill。
 
-### 範例：開發助手腳本
+### Automation 是什麼？
 
-建立 `dev-helper.sh`：
+Automation 結合了：
+- **指令**：要執行的任務
+- **Skill**：可選擇搭配的 Skill
+- **排程**：自動執行的時間
 
-```bash
-#!/bin/bash
+當 Automation 完成後，結果會進入**審查佇列**，讓你可以檢視並繼續後續工作。
 
-case "$1" in
-  "generate")
-    # 使用 Codex 生成程式碼
-    codex "$2"
-    ;;
-  "review")
-    # 使用 Claude 審查
-    claude "/review-code"
-    ;;
-  "commit")
-    # 使用 Claude 提交
-    claude "/commit"
-    ;;
-  "help")
-    echo "用法："
-    echo "  dev-helper generate '描述' - 生成程式碼"
-    echo "  dev-helper review        - 審查程式碼"
-    echo "  dev-helper commit        - 提交變更"
-    ;;
-  *)
-    echo "未知指令。使用 'dev-helper help' 查看說明。"
-    ;;
-esac
+### 設定 Automation
+
+<Steps>
+  <Step title="開啟 Automation 介面">
+    在 Codex 桌面版中，點擊側邊欄的 **Automations** 標籤
+  </Step>
+  <Step title="建立新 Automation">
+    點擊 **Create Automation**，填寫：
+    - **名稱**：這個自動化任務的名稱
+    - **指令**：要 Codex 執行的任務描述
+    - **Skill**：選擇要搭配的 Skill（可選）
+  </Step>
+  <Step title="設定排程">
+    選擇執行頻率：
+    - 每小時
+    - 每天（指定時間）
+    - 每週（指定日期和時間）
+    - 自訂 cron 表達式
+  </Step>
+  <Step title="啟用 Automation">
+    點擊 **Enable** 啟用，Codex 就會按照排程自動執行
+  </Step>
+</Steps>
+
+### 實用的 Automation 範例
+
+以下是 OpenAI 團隊實際使用的 Automation 範例：
+
+| 自動化任務 | 執行頻率 | 說明 |
+|-----------|---------|------|
+| 每日問題分類 | 每天早上 9:00 | 自動分類和整理 GitHub Issues |
+| CI 失敗摘要 | 每天下午 5:00 | 找出並摘要 CI 失敗的原因 |
+| 每日發布簡報 | 每天早上 8:00 | 生成當日發布內容的摘要 |
+| Bug 檢查 | 每週一 | 掃描程式碼找出潛在的 Bug |
+
+### 範例：設定每日程式碼審查
+
+```
+名稱：每日程式碼品質檢查
+
+指令：
+請檢查過去 24 小時內的所有 commit，找出：
+1. 潛在的安全問題
+2. 程式碼風格不一致的地方
+3. 可能的效能問題
+
+將結果整理成報告，包含建議的修正方式。
+
+排程：每天早上 9:00
 ```
 
-使用方式：
-
-```bash
-chmod +x dev-helper.sh
-./dev-helper.sh generate "建立一個 REST API"
-./dev-helper.sh review
-./dev-helper.sh commit
-```
+<Warning>
+**注意**：目前 Automation 需要電腦保持開啟才能執行。OpenAI 正在開發雲端版本，未來可以在背景持續運行。
+</Warning>
 
 ---
 
-## Codex CLI 基本指令
+## 審查佇列
 
-### 程式碼生成
+當 Automation 完成任務後，結果會進入審查佇列。
 
-```bash
-codex "用 Python 寫一個排序演算法"
-```
+### 如何使用審查佇列
 
-### 程式碼解釋
+1. 點擊側邊欄的 **Review Queue**
+2. 查看所有已完成的 Automation 結果
+3. 對每個結果你可以：
+   - **接受**：採用 Codex 的變更
+   - **修改**：調整後再接受
+   - **拒絕**：不採用這次的結果
+   - **繼續**：基於這個結果繼續對話
 
-```bash
-codex explain < my-code.py
-```
+---
 
-### 程式碼修正
+## 與 Claude Code 的比較
 
-```bash
-codex fix < buggy-code.js
-```
+| 功能 | Codex 桌面版 | Claude Code |
+|-----|-------------|-------------|
+| Skill 管理 UI | 有圖形化介面 | 檔案系統管理 |
+| Automation | 內建支援 | 需自行設定 |
+| 多任務並行 | 原生支援 | 單一任務 |
+| 跨平台同步 | 自動同步 | 需手動設定 |
+| 支援系統 | 僅 macOS | macOS / Windows / Linux |
+
+<Info>
+**建議**：如果你需要強大的自動化和 Skill 管理功能，Codex 桌面版是很好的選擇。如果需要跨平台支援或更深度的程式碼理解，Claude Code 可能更適合。
+</Info>
 
 ---
 
 ## 常見問題
 
 <AccordionGroup>
-  <Accordion title="Codex 和 Claude 的回答不一樣？">
-    這是正常的。兩者是不同的 AI 模型，各有優勢：
-    - **Codex**：專注於程式碼生成
-    - **Claude**：更擅長理解上下文和複雜推理
-
-    建議根據任務選擇適合的工具。
+  <Accordion title="Automation 可以在電腦關機時執行嗎？">
+    目前不行，需要電腦保持開啟。OpenAI 正在開發雲端版本，未來將支援雲端觸發器，讓 Automation 可以在背景持續運行。
   </Accordion>
 
-  <Accordion title="API 費用如何計算？">
-    - **Codex**：依 OpenAI 定價計算
-    - **Claude Code**：依 Anthropic 定價計算，或使用訂閱方案
-
-    兩者的費用是分開計算的。
+  <Accordion title="Skill 可以和團隊共享嗎？">
+    可以！在 Business 和 Enterprise 方案中，你可以將自訂 Skill 分享給團隊成員，確保大家使用一致的工作流程。
   </Accordion>
 
-  <Accordion title="可以只安裝一個嗎？">
-    可以！如果你只需要 Skill 功能，只安裝 Claude Code 就足夠了。Codex 是可選的補充工具。
+  <Accordion title="Windows 版本什麼時候推出？">
+    OpenAI 已宣布 Windows 版本正在開發中，但尚未公布具體發布日期。
+  </Accordion>
+
+  <Accordion title="Automation 執行失敗怎麼辦？">
+    失敗的 Automation 也會進入審查佇列，你可以查看錯誤訊息並手動重新執行或調整設定。
   </Accordion>
 </AccordionGroup>
+
+---
+
+## 開始使用
+
+<Steps>
+  <Step title="下載 Codex 桌面版">
+    前往 [openai.com/codex](https://openai.com/codex/) 下載
+  </Step>
+  <Step title="使用 ChatGPT 帳號登入">
+    使用你現有的 ChatGPT Plus/Pro/Business/Enterprise 帳號
+  </Step>
+  <Step title="探索 Skill 庫">
+    瀏覽官方 Skill 庫，安裝你需要的 Skill
+  </Step>
+  <Step title="設定第一個 Automation">
+    從簡單的任務開始，例如每日工作總結
+  </Step>
+</Steps>
 
 ---
 
 ## 相關資源
 
 <CardGroup cols={2}>
-  <Card title="OpenAI Codex" icon="robot" href="https://openai.com/blog/openai-codex">
-    了解 OpenAI Codex
+  <Card title="OpenAI Codex 官網" icon="robot" href="https://openai.com/codex/">
+    下載 Codex 桌面版
   </Card>
-  <Card title="Claude Code 安裝" icon="terminal" href="/skills/tools/claude-code">
-    查看 Claude Code 完整安裝說明
+  <Card title="Codex 開發者文件" icon="book" href="https://developers.openai.com/codex/app/">
+    查看完整的開發者文件
+  </Card>
+  <Card title="Codex 功能介紹" icon="sparkles" href="https://developers.openai.com/codex/app/features">
+    了解所有功能細節
+  </Card>
+  <Card title="Claude Code 使用" icon="terminal" href="/skills/tools/claude-code">
+    比較 Claude Code 的使用方式
   </Card>
 </CardGroup>
