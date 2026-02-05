@@ -1,0 +1,147 @@
+---
+title: "基礎介紹"
+description: "了解 Skill 的基本概念、組成元素和運作方式"
+icon: "book-open"
+---
+
+## Skill 的基本概念
+
+在開始使用 Skill 之前，讓我們先了解一些基本概念。
+
+---
+
+## Skill 的組成元素
+
+每個 Skill 都由兩個主要部分組成：
+
+### 1. 設定區（Frontmatter）
+
+設定區位於檔案最上方，用 `---` 包圍：
+
+```markdown
+---
+description: 這是 Skill 的簡短說明
+---
+```
+
+| 欄位 | 說明 | 必填 |
+|-----|------|-----|
+| `description` | Skill 的簡短說明，會顯示在 `/help` 中 | 建議填寫 |
+
+### 2. 指令內容
+
+設定區下方是實際要 Claude 執行的指令內容：
+
+```markdown
+---
+description: 檢查文件格式
+---
+
+請幫我檢查所有文件，確認格式正確。
+```
+
+---
+
+## Skill 的類型
+
+Skill 可以分為兩種類型：
+
+<CardGroup cols={2}>
+  <Card title="內建 Skill" icon="box">
+    Claude Code 預先提供的 Skill，例如 `/commit`、`/review-pr`。這些 Skill 已經設定好，可以直接使用。
+  </Card>
+  <Card title="自訂 Skill" icon="pen">
+    你自己建立的 Skill。可以根據你的需求，設計專屬的工作流程。
+  </Card>
+</CardGroup>
+
+---
+
+## Skill 檔案放在哪裡？
+
+自訂的 Skill 需要放在專案的特定位置：
+
+```
+你的專案/
+├── .claude/
+│   └── skills/
+│       ├── my-skill.md
+│       └── another-skill.md
+├── 其他檔案...
+```
+
+<Note>
+**重要**：Skill 檔案必須放在 `.claude/skills/` 資料夾中，Claude Code 才能找到它。
+</Note>
+
+---
+
+## Skill 的命名規則
+
+Skill 的名稱由**檔案名稱**決定：
+
+| 檔案名稱 | 對應的指令 |
+|---------|----------|
+| `check-docs.md` | `/check-docs` |
+| `daily-report.md` | `/daily-report` |
+| `review-code.md` | `/review-code` |
+
+<Tip>
+**命名建議**：
+- 使用小寫英文字母
+- 用連字號（-）分隔單字
+- 名稱要簡短且容易記憶
+</Tip>
+
+---
+
+## Skill 如何運作？
+
+當你輸入一個 Skill 指令時，會發生以下事情：
+
+<Steps>
+  <Step title="輸入指令">
+    你在 Claude Code 中輸入 `/skill名稱`
+  </Step>
+  <Step title="讀取 Skill">
+    Claude Code 找到對應的 Skill 檔案並讀取內容
+  </Step>
+  <Step title="執行任務">
+    Claude 根據 Skill 中的指令內容執行任務
+  </Step>
+  <Step title="回傳結果">
+    執行完成後，Claude 會告訴你結果
+  </Step>
+</Steps>
+
+---
+
+## 重要觀念
+
+<AccordionGroup>
+  <Accordion title="Skill 是以專案為單位的">
+    你在 A 專案建立的 Skill，不會自動出現在 B 專案。如果想在多個專案使用相同的 Skill，需要複製到每個專案的 `.claude/skills/` 資料夾中。
+  </Accordion>
+
+  <Accordion title="Skill 可以帶參數">
+    除了基本指令，你還可以在指令後面加上參數。例如：
+    ```
+    /review-pr 123
+    ```
+    其中 `123` 就是傳遞給 Skill 的參數。
+  </Accordion>
+
+  <Accordion title="Skill 使用自然語言">
+    Skill 的指令內容使用自然語言撰寫，不需要學習程式語言。你只要用中文或英文描述你想要 Claude 做什麼就可以了。
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 下一步
+
+了解基本概念後，讓我們來學習如何實際使用 Skill。
+
+<Card title="如何使用 Skill" icon="play" href="/skills/how-to-use">
+  學習使用 Skill 的各種方法和實用技巧
+</Card>

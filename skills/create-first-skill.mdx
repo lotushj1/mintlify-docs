@@ -1,0 +1,287 @@
+---
+title: "建立你的第一個 Skill"
+description: "從零開始，一步步學習如何建立自己的 Skill"
+icon: "hammer"
+---
+
+## 準備工作
+
+在開始之前，請確認你已經：
+- 安裝了 Claude Code
+- 有一個專案資料夾可以練習
+
+---
+
+## 步驟 1：建立資料夾結構
+
+首先，在你的專案根目錄建立 `.claude/skills/` 資料夾：
+
+<Tabs>
+  <Tab title="Mac / Linux">
+    ```bash
+    mkdir -p .claude/skills
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```bash
+    mkdir .claude
+    mkdir .claude\skills
+    ```
+  </Tab>
+  <Tab title="手動建立">
+    1. 在專案根目錄新增資料夾 `.claude`
+    2. 在 `.claude` 裡面新增資料夾 `skills`
+  </Tab>
+</Tabs>
+
+完成後，你的專案結構應該像這樣：
+
+```
+你的專案/
+├── .claude/
+│   └── skills/
+│       └── (這裡放 Skill 檔案)
+├── 其他檔案...
+```
+
+---
+
+## 步驟 2：建立 Skill 檔案
+
+讓我們建立一個簡單的 Skill 來練習。這個 Skill 會幫你檢查專案中的文件。
+
+在 `.claude/skills/` 資料夾中建立一個新檔案 `check-docs.md`：
+
+```markdown
+---
+description: 檢查文件格式是否正確
+---
+
+請幫我檢查這個專案中的所有文件（.md 和 .mdx 檔案），確認：
+
+1. 每個檔案都有標題
+2. 內容結構清晰
+3. 沒有明顯的錯字
+
+如果發現問題，請列出需要修正的項目。
+如果沒有問題，請告訴我「檢查完成，一切正常」。
+```
+
+<Tip>
+**小提示**：你可以用任何文字編輯器（如記事本、VS Code）來建立這個檔案。
+</Tip>
+
+---
+
+## 步驟 3：測試你的 Skill
+
+建立完成後，開啟 Claude Code 並輸入：
+
+```
+/check-docs
+```
+
+Claude 就會根據你寫的指令來檢查文件！
+
+---
+
+## Skill 檔案詳解
+
+讓我們詳細了解 Skill 檔案的結構：
+
+```markdown
+---
+description: 這是 Skill 的簡短說明
+---
+
+這裡是詳細的指令內容...
+```
+
+### 設定區（必要）
+
+```markdown
+---
+description: 檢查文件格式是否正確
+---
+```
+
+- 用三個連字號 `---` 包圍
+- `description` 是這個 Skill 的說明，會顯示在 `/help` 中
+
+### 指令內容
+
+這是 Skill 的主體，用**自然語言**描述你想讓 Claude 做什麼：
+
+- 可以用中文或英文
+- 可以列出步驟
+- 可以說明輸出格式
+
+---
+
+## 更多範例
+
+### 範例 1：每日工作總結
+
+建立檔案 `daily-summary.md`：
+
+```markdown
+---
+description: 生成今日工作總結
+---
+
+請幫我整理今天的工作內容：
+
+1. 查看今天的 Git 提交記錄
+2. 整理主要完成的工作項目
+3. 用簡潔的條列方式呈現
+
+輸出格式：
+- [類型] 工作內容描述
+
+類型包括：新增、修正、更新、刪除
+```
+
+使用方式：`/daily-summary`
+
+---
+
+### 範例 2：程式碼審查
+
+建立檔案 `review-code.md`：
+
+```markdown
+---
+description: 審查程式碼品質
+---
+
+請幫我審查最近修改的程式碼，重點檢查：
+
+## 審查項目
+1. 是否有潛在的安全問題
+2. 程式碼是否容易理解
+3. 是否有重複的程式碼
+4. 命名是否清楚明確
+
+## 輸出格式
+請用以下格式回報：
+
+### 優點
+- 列出做得好的地方
+
+### 建議改進
+- 列出可以改進的地方
+
+### 需要注意
+- 列出需要立即處理的問題（如果有）
+```
+
+使用方式：`/review-code`
+
+---
+
+### 範例 3：快速搜尋
+
+建立檔案 `find.md`：
+
+```markdown
+---
+description: 在專案中搜尋特定內容
+---
+
+請在這個專案中搜尋使用者指定的內容，並：
+
+1. 列出所有包含該內容的檔案
+2. 顯示相關的程式碼片段
+3. 說明這些內容的用途
+
+如果找不到，請告訴使用者「沒有找到相關內容」。
+```
+
+使用方式：`/find 關鍵字`
+
+---
+
+## 撰寫好 Skill 的技巧
+
+<AccordionGroup>
+  <Accordion title="指令要具體明確">
+    **不好的寫法**：
+    ```
+    幫我檢查程式碼
+    ```
+
+    **好的寫法**：
+    ```
+    請檢查這個專案中的 JavaScript 檔案，
+    找出未使用的變數和函式。
+    ```
+  </Accordion>
+
+  <Accordion title="說明預期的輸出格式">
+    告訴 Claude 你希望看到什麼樣的結果：
+    ```
+    請用以下格式輸出：
+    - 檔案名稱：問題描述
+    ```
+  </Accordion>
+
+  <Accordion title="考慮失敗的情況">
+    加入「如果沒有問題」或「如果找不到」的處理：
+    ```
+    如果沒有發現問題，請回覆「檢查完成，沒有問題」
+    ```
+  </Accordion>
+
+  <Accordion title="分步驟描述任務">
+    複雜的任務可以分成步驟：
+    ```
+    請依序執行：
+    1. 首先...
+    2. 然後...
+    3. 最後...
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="Skill 建立後沒有出現？">
+    請確認：
+    1. 檔案放在 `.claude/skills/` 資料夾中
+    2. 檔案副檔名是 `.md`
+    3. 檔案有正確的 frontmatter 格式
+  </Accordion>
+
+  <Accordion title="可以修改已建立的 Skill 嗎？">
+    可以！直接編輯 `.md` 檔案，儲存後下次使用就會套用新的內容。
+  </Accordion>
+
+  <Accordion title="Skill 名稱有限制嗎？">
+    建議：
+    - 使用小寫英文字母
+    - 用連字號（-）分隔單字
+    - 避免使用特殊字元
+    - 名稱要簡短好記
+  </Accordion>
+
+  <Accordion title="可以刪除 Skill 嗎？">
+    可以，直接刪除對應的 `.md` 檔案即可。
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 恭喜你！
+
+你已經學會了如何建立自己的 Skill！現在你可以：
+
+- 使用內建的 Skill 來提高效率
+- 建立自訂的 Skill 來自動化重複工作
+- 根據需求修改和調整 Skill
+
+<Card title="回到 Skill 總覽" icon="house" href="/skills/what-is-skill">
+  回顧 Skill 的基本概念
+</Card>
