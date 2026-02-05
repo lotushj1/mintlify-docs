@@ -1,0 +1,244 @@
+---
+title: "在 CLI 中使用 Skill"
+description: "學習如何在各種命令列環境中使用 Skill 功能"
+icon: "rectangle-terminal"
+---
+
+## 什麼是 CLI 使用方式？
+
+CLI（Command Line Interface）使用方式指的是透過終端機或命令提示字元來執行 Skill。這是最基礎、最靈活的使用方式。
+
+---
+
+## 前置需求
+
+<CardGroup cols={2}>
+  <Card title="終端機" icon="terminal">
+    - macOS: Terminal 或 iTerm2
+    - Windows: PowerShell 或 Windows Terminal
+    - Linux: 任何終端機模擬器
+  </Card>
+  <Card title="Claude Code" icon="code">
+    需要先安裝 Claude Code CLI 工具
+
+    [查看安裝說明](/skills/tools/claude-code)
+  </Card>
+</CardGroup>
+
+---
+
+## 基本使用方式
+
+### 互動模式
+
+啟動 Claude Code 進入互動模式：
+
+```bash
+claude
+```
+
+然後輸入 Skill 指令：
+
+```
+> /commit
+```
+
+### 單次執行模式
+
+直接在終端機執行單一 Skill：
+
+```bash
+claude "/commit"
+```
+
+執行完成後會自動結束。
+
+### 帶參數執行
+
+```bash
+claude "/review-pr 123"
+```
+
+---
+
+## 進階 CLI 技巧
+
+### 結合管道（Pipe）
+
+你可以將其他指令的輸出傳給 Claude：
+
+```bash
+git diff | claude "請幫我審查這些變更"
+```
+
+### 使用在 Shell 腳本中
+
+建立一個自動化腳本 `daily-commit.sh`：
+
+```bash
+#!/bin/bash
+
+# 執行每日提交 Skill
+claude "/daily-commit"
+
+echo "每日提交完成！"
+```
+
+### 設定別名（Alias）
+
+在你的 shell 設定檔（`.bashrc` 或 `.zshrc`）中加入：
+
+```bash
+# 快速提交
+alias cc="claude '/commit'"
+
+# 快速審查
+alias cr="claude '/review-pr'"
+```
+
+之後只要輸入 `cc` 就能快速執行提交 Skill。
+
+---
+
+## 不同作業系統的設定
+
+<Tabs>
+  <Tab title="macOS">
+    ### 安裝
+    ```bash
+    brew install claude-code
+    # 或
+    npm install -g @anthropic-ai/claude-code
+    ```
+
+    ### 設定 PATH
+    如果使用 npm 安裝，確保 npm 全域路徑在 PATH 中：
+    ```bash
+    export PATH="$PATH:$(npm bin -g)"
+    ```
+
+    ### 建議的終端機
+    - [iTerm2](https://iterm2.com/) - 功能豐富的終端機
+    - [Warp](https://www.warp.dev/) - 現代化終端機
+  </Tab>
+  <Tab title="Windows">
+    ### 安裝
+    ```powershell
+    npm install -g @anthropic-ai/claude-code
+    ```
+
+    ### 建議的終端機
+    - [Windows Terminal](https://aka.ms/terminal) - Microsoft 官方終端機
+    - [PowerShell 7](https://github.com/PowerShell/PowerShell) - 跨平台 PowerShell
+
+    ### 注意事項
+    - 建議使用 PowerShell 而非 CMD
+    - 可能需要以管理員身份執行安裝
+  </Tab>
+  <Tab title="Linux">
+    ### 安裝
+    ```bash
+    npm install -g @anthropic-ai/claude-code
+    ```
+
+    ### 設定 PATH
+    確保 npm 全域路徑在 PATH 中：
+    ```bash
+    export PATH="$PATH:$(npm bin -g)"
+    ```
+
+    ### 各發行版注意事項
+    - **Ubuntu/Debian**: 可能需要先安裝 Node.js
+      ```bash
+      curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+      sudo apt-get install -y nodejs
+      ```
+    - **Arch Linux**: 可以從 AUR 安裝
+  </Tab>
+</Tabs>
+
+---
+
+## 環境變數設定
+
+### 必要的環境變數
+
+| 變數名稱 | 說明 | 範例 |
+|---------|------|------|
+| `ANTHROPIC_API_KEY` | API 金鑰（選用，登入後不需要） | `sk-ant-...` |
+
+### 可選的環境變數
+
+| 變數名稱 | 說明 | 預設值 |
+|---------|------|--------|
+| `CLAUDE_CODE_CONFIG_DIR` | 設定檔目錄 | `~/.config/claude-code` |
+| `CLAUDE_CODE_LOG_LEVEL` | 日誌等級 | `info` |
+
+### 設定方式
+
+<Tabs>
+  <Tab title="臨時設定">
+    ```bash
+    export ANTHROPIC_API_KEY="your-key"
+    claude "/commit"
+    ```
+  </Tab>
+  <Tab title="永久設定（bash）">
+    在 `~/.bashrc` 中加入：
+    ```bash
+    export ANTHROPIC_API_KEY="your-key"
+    ```
+    然後執行：
+    ```bash
+    source ~/.bashrc
+    ```
+  </Tab>
+  <Tab title="永久設定（zsh）">
+    在 `~/.zshrc` 中加入：
+    ```bash
+    export ANTHROPIC_API_KEY="your-key"
+    ```
+    然後執行：
+    ```bash
+    source ~/.zshrc
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="command not found: claude">
+    這表示 Claude Code 沒有正確安裝或不在 PATH 中。
+
+    解決方法：
+    1. 確認已安裝：`npm list -g @anthropic-ai/claude-code`
+    2. 檢查 PATH 設定
+    3. 重新開啟終端機
+  </Accordion>
+
+  <Accordion title="權限被拒絕">
+    嘗試以下方法：
+    1. 使用 `sudo`（不推薦長期使用）
+    2. 使用 nvm 管理 Node.js
+    3. 修改 npm 全域目錄權限
+  </Accordion>
+
+  <Accordion title="執行速度很慢">
+    可能的原因：
+    1. 網路連線問題
+    2. 專案太大，Claude 需要更多時間分析
+
+    建議：確保網路穩定，或縮小操作範圍
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 下一步
+
+<Card title="建立你的第一個 Skill" icon="hammer" href="/skills/create-first-skill">
+  學會 CLI 使用後，來建立自己的 Skill 吧！
+</Card>

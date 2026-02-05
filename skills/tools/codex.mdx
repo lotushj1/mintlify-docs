@@ -1,0 +1,213 @@
+---
+title: "在 Codex CLI 中使用 Skill"
+description: "學習如何在 OpenAI Codex CLI 中使用 Skill 功能"
+icon: "microchip"
+---
+
+## 什麼是 Codex CLI？
+
+**Codex CLI** 是 OpenAI 推出的命令列工具，讓開發者可以在終端機中使用 AI 輔助功能。雖然 Codex 和 Claude 是不同的 AI 模型，但你可以在同一個工作環境中使用兩者。
+
+<Warning>
+Codex CLI 和 Claude Code 是不同的工具。本頁說明如何在使用 Codex 的環境中搭配 Claude Code 的 Skill 功能。
+</Warning>
+
+---
+
+## 前置需求
+
+<Steps>
+  <Step title="安裝 Node.js">
+    需要 Node.js 18 或更新版本
+
+    [下載 Node.js](https://nodejs.org/)
+  </Step>
+  <Step title="安裝 Codex CLI">
+    ```bash
+    npm install -g @openai/codex
+    ```
+  </Step>
+  <Step title="安裝 Claude Code">
+    ```bash
+    npm install -g @anthropic-ai/claude-code
+    ```
+  </Step>
+  <Step title="設定 API 金鑰">
+    需要分別設定 OpenAI 和 Anthropic 的 API 金鑰
+  </Step>
+</Steps>
+
+---
+
+## 環境設定
+
+### 設定 API 金鑰
+
+<Tabs>
+  <Tab title="macOS / Linux">
+    在 `~/.bashrc` 或 `~/.zshrc` 中加入：
+
+    ```bash
+    # OpenAI（給 Codex 使用）
+    export OPENAI_API_KEY="sk-..."
+
+    # Anthropic（給 Claude Code 使用）
+    export ANTHROPIC_API_KEY="sk-ant-..."
+    ```
+
+    然後執行：
+    ```bash
+    source ~/.bashrc  # 或 source ~/.zshrc
+    ```
+  </Tab>
+  <Tab title="Windows">
+    在 PowerShell 中設定：
+
+    ```powershell
+    # 設定環境變數
+    [Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-...", "User")
+    [Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-...", "User")
+    ```
+
+    需要重新開啟 PowerShell 生效。
+  </Tab>
+</Tabs>
+
+---
+
+## 同時使用 Codex 和 Claude Code
+
+### 使用情境對比
+
+| 任務 | 推薦工具 | 原因 |
+|-----|---------|------|
+| 程式碼生成 | Codex | 擅長程式碼補全 |
+| 程式碼審查 | Claude Code | 提供更詳細的分析 |
+| Git 操作 | Claude Code | Skill 支援完整 |
+| 快速問答 | 兩者皆可 | 依個人偏好 |
+
+### 搭配使用範例
+
+#### 工作流程：開發新功能
+
+1. **使用 Codex 生成程式碼**
+   ```bash
+   codex "建立一個用戶登入的 API endpoint"
+   ```
+
+2. **使用 Claude Code 審查**
+   ```bash
+   claude "/review-code"
+   ```
+
+3. **使用 Claude Code 提交**
+   ```bash
+   claude "/commit"
+   ```
+
+---
+
+## 建立整合腳本
+
+你可以建立一個整合腳本，結合兩個工具的優點：
+
+### 範例：開發助手腳本
+
+建立 `dev-helper.sh`：
+
+```bash
+#!/bin/bash
+
+case "$1" in
+  "generate")
+    # 使用 Codex 生成程式碼
+    codex "$2"
+    ;;
+  "review")
+    # 使用 Claude 審查
+    claude "/review-code"
+    ;;
+  "commit")
+    # 使用 Claude 提交
+    claude "/commit"
+    ;;
+  "help")
+    echo "用法："
+    echo "  dev-helper generate '描述' - 生成程式碼"
+    echo "  dev-helper review        - 審查程式碼"
+    echo "  dev-helper commit        - 提交變更"
+    ;;
+  *)
+    echo "未知指令。使用 'dev-helper help' 查看說明。"
+    ;;
+esac
+```
+
+使用方式：
+
+```bash
+chmod +x dev-helper.sh
+./dev-helper.sh generate "建立一個 REST API"
+./dev-helper.sh review
+./dev-helper.sh commit
+```
+
+---
+
+## Codex CLI 基本指令
+
+### 程式碼生成
+
+```bash
+codex "用 Python 寫一個排序演算法"
+```
+
+### 程式碼解釋
+
+```bash
+codex explain < my-code.py
+```
+
+### 程式碼修正
+
+```bash
+codex fix < buggy-code.js
+```
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="Codex 和 Claude 的回答不一樣？">
+    這是正常的。兩者是不同的 AI 模型，各有優勢：
+    - **Codex**：專注於程式碼生成
+    - **Claude**：更擅長理解上下文和複雜推理
+
+    建議根據任務選擇適合的工具。
+  </Accordion>
+
+  <Accordion title="API 費用如何計算？">
+    - **Codex**：依 OpenAI 定價計算
+    - **Claude Code**：依 Anthropic 定價計算，或使用訂閱方案
+
+    兩者的費用是分開計算的。
+  </Accordion>
+
+  <Accordion title="可以只安裝一個嗎？">
+    可以！如果你只需要 Skill 功能，只安裝 Claude Code 就足夠了。Codex 是可選的補充工具。
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 相關資源
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Codex" icon="robot" href="https://openai.com/blog/openai-codex">
+    了解 OpenAI Codex
+  </Card>
+  <Card title="Claude Code 安裝" icon="terminal" href="/skills/tools/claude-code">
+    查看 Claude Code 完整安裝說明
+  </Card>
+</CardGroup>

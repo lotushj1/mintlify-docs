@@ -1,0 +1,213 @@
+---
+title: "在 Claude Code 中使用 Skill"
+description: "學習如何在 Claude Code 終端機工具中使用 Skill 功能"
+icon: "terminal"
+---
+
+## 什麼是 Claude Code？
+
+**Claude Code** 是 Anthropic 官方推出的命令列工具（CLI），讓你可以在終端機中直接與 Claude 互動，進行程式開發、檔案管理和各種自動化任務。
+
+<Info>
+Claude Code 是使用 Skill 最直接的方式，所有 Skill 功能都能完整支援。
+</Info>
+
+---
+
+## 前置需求
+
+在開始之前，請確認你已經具備：
+
+<Steps>
+  <Step title="Node.js 環境">
+    需要 Node.js 18 或更新版本
+
+    **檢查版本**：
+    ```bash
+    node --version
+    ```
+
+    如果尚未安裝，請前往 [Node.js 官網](https://nodejs.org/) 下載安裝
+  </Step>
+  <Step title="Anthropic 帳號">
+    需要有效的 Claude 訂閱（Pro、Team 或 Enterprise）
+
+    [前往 Anthropic Console](https://console.anthropic.com/)
+  </Step>
+</Steps>
+
+---
+
+## 安裝步驟
+
+### 方法一：使用 npm 安裝（推薦）
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+### 方法二：使用 Homebrew 安裝（macOS）
+
+```bash
+brew install claude-code
+```
+
+### 驗證安裝
+
+安裝完成後，輸入以下指令確認：
+
+```bash
+claude --version
+```
+
+---
+
+## 登入與設定
+
+### 首次登入
+
+```bash
+claude login
+```
+
+這會開啟瀏覽器，引導你完成 Anthropic 帳號登入。
+
+### 設定完成確認
+
+登入成功後，輸入以下指令測試：
+
+```bash
+claude "你好"
+```
+
+如果 Claude 有回應，表示設定完成。
+
+---
+
+## 使用 Skill
+
+### 啟動 Claude Code
+
+在終端機中輸入：
+
+```bash
+claude
+```
+
+這會進入互動模式。
+
+### 執行 Skill
+
+在互動模式中，直接輸入 Skill 指令：
+
+```
+/commit
+```
+
+或
+
+```
+/review-pr 123
+```
+
+### 單次執行 Skill
+
+如果只想執行一次 Skill 而不進入互動模式：
+
+```bash
+claude "/commit"
+```
+
+---
+
+## 常用 Skill 範例
+
+### 提交程式碼
+
+```
+/commit
+```
+
+Claude 會自動：
+1. 檢查目前的變更
+2. 生成適當的提交訊息
+3. 完成 Git 提交
+
+### 審查 Pull Request
+
+```
+/review-pr 42
+```
+
+Claude 會分析指定 PR 的變更並提供建議。
+
+### 使用自訂 Skill
+
+如果你已經建立了自訂 Skill（放在 `.claude/skills/` 資料夾），可以直接使用：
+
+```
+/your-custom-skill
+```
+
+---
+
+## 進階設定
+
+### 設定檔位置
+
+Claude Code 的設定檔位於：
+
+| 系統 | 位置 |
+|-----|------|
+| macOS / Linux | `~/.config/claude-code/config.json` |
+| Windows | `%APPDATA%\claude-code\config.json` |
+
+### 環境變數
+
+你也可以使用環境變數來設定：
+
+```bash
+export ANTHROPIC_API_KEY="your-api-key"
+```
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="安裝時出現權限錯誤">
+    嘗試使用 sudo（macOS/Linux）：
+    ```bash
+    sudo npm install -g @anthropic-ai/claude-code
+    ```
+
+    或使用 nvm 管理 Node.js 版本來避免權限問題。
+  </Accordion>
+
+  <Accordion title="登入後仍無法使用">
+    請確認：
+    1. 你的 Claude 訂閱是否有效
+    2. 網路連線是否正常
+    3. 嘗試重新登入：`claude logout` 然後 `claude login`
+  </Accordion>
+
+  <Accordion title="Skill 沒有反應">
+    請確認：
+    1. 已進入 Claude Code 互動模式
+    2. Skill 名稱拼寫正確
+    3. 如果是自訂 Skill，檔案是否放在正確位置
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 相關資源
+
+<CardGroup cols={2}>
+  <Card title="Claude Code 官方文件" icon="book" href="https://docs.anthropic.com/claude-code">
+    查看完整的官方文件
+  </Card>
+  <Card title="GitHub Repository" icon="github" href="https://github.com/anthropics/claude-code">
+    查看原始碼和回報問題
+  </Card>
+</CardGroup>

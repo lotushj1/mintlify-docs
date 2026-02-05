@@ -1,0 +1,228 @@
+---
+title: "在 Claude 桌面版中使用 Skill"
+description: "學習如何在 Claude 桌面應用程式中使用 Skill 功能"
+icon: "desktop"
+---
+
+## 什麼是 Claude 桌面版？
+
+**Claude 桌面版**是 Anthropic 官方推出的桌面應用程式，讓你可以在不開啟瀏覽器的情況下直接與 Claude 對話。桌面版包含了 **Code 功能**，可以讓你在本地專案中使用 Skill。
+
+<Info>
+Claude 桌面版的 Code 功能結合了 Claude 的強大能力和本地檔案存取，讓你可以更方便地進行程式開發。
+</Info>
+
+---
+
+## 前置需求
+
+<Steps>
+  <Step title="作業系統需求">
+    - macOS 12 (Monterey) 或更新版本
+    - Windows 10/11
+  </Step>
+  <Step title="Claude 帳號">
+    需要有效的 Claude Pro、Team 或 Enterprise 訂閱
+
+    [訂閱 Claude](https://claude.ai/upgrade)
+  </Step>
+</Steps>
+
+---
+
+## 下載與安裝
+
+### macOS
+
+1. 前往 [Claude 下載頁面](https://claude.ai/download)
+2. 點擊 **Download for macOS**
+3. 開啟下載的 `.dmg` 檔案
+4. 將 Claude 拖曳到「應用程式」資料夾
+5. 首次開啟時，右鍵點擊並選擇「開啟」（因為這是從網路下載的應用程式）
+
+### Windows
+
+1. 前往 [Claude 下載頁面](https://claude.ai/download)
+2. 點擊 **Download for Windows**
+3. 執行下載的 `.exe` 安裝檔
+4. 依照安裝精靈的指示完成安裝
+5. 從開始選單啟動 Claude
+
+---
+
+## 啟用 Code 功能
+
+### 步驟 1：開啟設定
+
+1. 啟動 Claude 桌面版
+2. 點擊右上角的 **設定** 圖示（齒輪）
+3. 選擇 **Developer** 或 **開發者** 選項
+
+### 步驟 2：啟用 Code 功能
+
+1. 找到 **Code** 或 **程式碼** 區塊
+2. 開啟「Enable Code features」開關
+3. 授權 Claude 存取你的檔案系統
+
+### 步驟 3：設定工作目錄
+
+1. 點擊「Add folder」或「新增資料夾」
+2. 選擇你想要 Claude 存取的專案資料夾
+3. 確認授權
+
+<Warning>
+為了安全起見，Claude 只能存取你明確授權的資料夾。
+</Warning>
+
+---
+
+## 使用 Skill
+
+### 在對話中使用 Skill
+
+啟用 Code 功能後，你可以在對話中直接使用 Skill：
+
+1. 確認目前的工作目錄是你的專案
+2. 在對話框中輸入 Skill 指令，例如：
+   ```
+   /commit
+   ```
+3. Claude 會執行對應的 Skill
+
+### 使用自訂 Skill
+
+如果你的專案中有自訂 Skill（在 `.claude/skills/` 資料夾），Claude 桌面版也能讀取並執行：
+
+```
+/your-custom-skill
+```
+
+---
+
+## 介面導覽
+
+### 主要區域
+
+| 區域 | 說明 |
+|-----|------|
+| 對話區 | 與 Claude 對話的主要區域 |
+| 檔案面板 | 顯示目前專案的檔案結構 |
+| 終端機 | 執行命令列指令（Code 功能） |
+
+### 常用快捷鍵
+
+| 功能 | macOS | Windows |
+|-----|-------|---------|
+| 新對話 | `Cmd + N` | `Ctrl + N` |
+| 設定 | `Cmd + ,` | `Ctrl + ,` |
+| 切換檔案面板 | `Cmd + B` | `Ctrl + B` |
+| 開啟資料夾 | `Cmd + O` | `Ctrl + O` |
+
+---
+
+## 實用工作流程
+
+### 工作流程一：每日程式碼審查
+
+1. 開啟 Claude 桌面版
+2. 選擇你的專案資料夾
+3. 輸入：
+   ```
+   /review-code
+   ```
+4. Claude 會分析最近的變更並提供建議
+
+### 工作流程二：撰寫文件
+
+1. 在對話中詢問：
+   ```
+   請幫我為 src/utils.js 中的函式生成文件
+   ```
+2. Claude 會讀取檔案並生成文件
+3. 你可以直接讓 Claude 將文件寫入檔案
+
+### 工作流程三：快速提交
+
+1. 完成程式碼修改後
+2. 輸入：
+   ```
+   /commit
+   ```
+3. Claude 會檢視變更、生成提交訊息並完成提交
+
+---
+
+## Code 功能的權限設定
+
+### 可設定的權限
+
+| 權限 | 說明 | 建議 |
+|-----|------|------|
+| 讀取檔案 | 允許 Claude 讀取專案檔案 | 開啟 |
+| 寫入檔案 | 允許 Claude 修改檔案 | 視需求開啟 |
+| 執行命令 | 允許 Claude 執行終端機指令 | 謹慎開啟 |
+| Git 操作 | 允許 Claude 進行 Git 操作 | 視需求開啟 |
+
+### 安全建議
+
+<AccordionGroup>
+  <Accordion title="只授權必要的資料夾">
+    不要授權整個硬碟或家目錄，只授權你正在工作的專案資料夾。
+  </Accordion>
+
+  <Accordion title="審查 Claude 的操作">
+    在 Claude 執行任何寫入或命令操作前，桌面版會要求你確認。請仔細審查後再同意。
+  </Accordion>
+
+  <Accordion title="定期檢查授權">
+    定期檢查設定中的授權資料夾清單，移除不再需要的授權。
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="Code 功能選項沒有出現？">
+    請確認：
+    1. 你的訂閱方案支援 Code 功能（Pro 以上）
+    2. 桌面版已更新到最新版本
+    3. 嘗試重新啟動應用程式
+  </Accordion>
+
+  <Accordion title="Claude 無法讀取我的檔案？">
+    請確認：
+    1. 該資料夾已在設定中授權
+    2. 檔案沒有特殊的權限限制
+    3. 檔案不是被忽略的類型（如 .git 資料夾內的檔案）
+  </Accordion>
+
+  <Accordion title="Skill 沒有執行？">
+    請確認：
+    1. Code 功能已啟用
+    2. 目前的工作目錄正確
+    3. 如果是自訂 Skill，檔案放在正確的位置
+  </Accordion>
+
+  <Accordion title="桌面版和網頁版有什麼差別？">
+    主要差別：
+    - **桌面版**：可以存取本地檔案、執行 Skill、使用 Code 功能
+    - **網頁版**：只能對話，無法存取本地檔案
+
+    如果需要使用 Skill，建議使用桌面版。
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 相關資源
+
+<CardGroup cols={2}>
+  <Card title="下載 Claude 桌面版" icon="download" href="https://claude.ai/download">
+    取得最新版本的 Claude 桌面應用程式
+  </Card>
+  <Card title="Claude 官方說明" icon="book" href="https://support.anthropic.com/">
+    查看官方支援文件
+  </Card>
+</CardGroup>
