@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Skill 學習網站",
+  "name": "Skill 超基礎入門介紹",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -39,7 +39,13 @@
           {
             "group": "進階學習",
             "pages": [
-              "skills/create-first-skill"
+              "skills/create-first-skill",
+              {
+                "group": "實用範例",
+                "pages": [
+                  "skills/examples/newsletter-automation"
+                ]
+              }
             ]
           },
           {
