@@ -1,0 +1,198 @@
+---
+title: "如何使用 Skill"
+description: "學習使用 Skill 的各種方法，包含內建 Skill 和實用技巧"
+icon: "play"
+---
+
+## 基本使用方法
+
+在 Claude Code 中使用 Skill 非常簡單，只要輸入：
+
+```
+/skill名稱
+```
+
+---
+
+## 使用步驟
+
+<Steps>
+  <Step title="開啟 Claude Code">
+    在終端機中輸入 `claude` 啟動 Claude Code
+  </Step>
+  <Step title="輸入 Skill 指令">
+    直接輸入你想使用的 Skill，例如 `/commit`
+  </Step>
+  <Step title="等待執行">
+    Claude 會自動執行 Skill 中定義的所有步驟
+  </Step>
+  <Step title="查看結果">
+    執行完成後，Claude 會顯示執行結果
+  </Step>
+</Steps>
+
+---
+
+## 常見的內建 Skill
+
+以下是 Claude Code 提供的常用內建 Skill：
+
+### /commit - 提交程式碼
+
+<Card title="/commit" icon="code-commit">
+**用途**：自動提交程式碼變更
+
+這個 Skill 會：
+1. 檢查目前的變更內容
+2. 自動生成適當的提交訊息
+3. 完成 Git 提交流程
+</Card>
+
+**使用方式**：
+```
+/commit
+```
+
+---
+
+### /review-pr - 審查拉取請求
+
+<Card title="/review-pr" icon="code-pull-request">
+**用途**：審查 Pull Request
+
+這個 Skill 會：
+1. 分析 PR 的變更內容
+2. 找出潛在的問題
+3. 提供改進建議
+</Card>
+
+**使用方式**：
+```
+/review-pr 123
+```
+
+其中 `123` 是 PR 的編號。
+
+---
+
+## 帶參數的使用方式
+
+許多 Skill 可以接受額外的參數，讓功能更加靈活：
+
+### 基本語法
+
+```
+/skill名稱 參數
+```
+
+### 範例
+
+| 指令 | 說明 |
+|-----|------|
+| `/review-pr 123` | 審查編號 123 的 PR |
+| `/check-file README.md` | 檢查特定檔案 |
+| `/search 關鍵字` | 搜尋特定內容 |
+
+---
+
+## 查看可用的 Skill
+
+想知道目前有哪些 Skill 可以使用？輸入：
+
+```
+/help
+```
+
+這會列出所有可用的 Skill 及其說明。
+
+---
+
+## 實用使用情境
+
+### 情境一：每日工作開始
+
+早上開始工作時，可以使用 Skill 快速了解專案狀態：
+
+```
+/status
+```
+
+### 情境二：完成一個功能
+
+當你完成一個功能，準備提交程式碼時：
+
+```
+/commit
+```
+
+### 情境三：審查同事的程式碼
+
+收到同事的 PR 需要審查時：
+
+```
+/review-pr 42
+```
+
+### 情境四：下班前總結
+
+下班前整理今天的工作內容：
+
+```
+/daily-summary
+```
+
+---
+
+## 使用技巧
+
+<AccordionGroup>
+  <Accordion title="善用 Tab 自動完成">
+    輸入 `/` 後按 Tab 鍵，可能會顯示可用的 Skill 列表（視環境而定）。
+  </Accordion>
+
+  <Accordion title="參數可以很靈活">
+    Skill 的參數不一定要是數字，也可以是檔案名稱、路徑或其他文字。
+  </Accordion>
+
+  <Accordion title="可以連續使用多個 Skill">
+    你可以連續執行多個 Skill 來完成一系列工作，例如先 `/check` 再 `/commit`。
+  </Accordion>
+
+  <Accordion title="不確定時就問 Claude">
+    如果不確定某個 Skill 怎麼用，可以直接問 Claude：「/commit 這個指令要怎麼使用？」
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="Skill 沒有反應怎麼辦？">
+    請確認：
+    1. 指令名稱是否正確（注意大小寫）
+    2. 是否在 Claude Code 環境中執行
+    3. 如果是自訂 Skill，檔案是否放在正確位置
+  </Accordion>
+
+  <Accordion title="可以取消正在執行的 Skill 嗎？">
+    可以按 `Ctrl + C` 來中斷執行。
+  </Accordion>
+
+  <Accordion title="Skill 執行失敗怎麼辦？">
+    查看錯誤訊息，通常會說明失敗的原因。常見原因包括：
+    - 缺少必要的參數
+    - 沒有對應的權限
+    - 檔案或資源不存在
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 下一步
+
+學會使用 Skill 後，讓我們來建立你的第一個自訂 Skill！
+
+<Card title="建立你的第一個 Skill" icon="hammer" href="/skills/create-first-skill">
+  學習如何從零開始建立自己的 Skill
+</Card>
