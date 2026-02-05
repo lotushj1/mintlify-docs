@@ -1,198 +1,135 @@
 ---
 title: "如何使用 Skill"
-description: "學習使用 Skill 的各種方法，包含內建 Skill 和實用技巧"
+description: "了解在不同工具和環境中使用 Skill 的方式"
 icon: "play"
 ---
 
-## 基本使用方法
+## 使用 Skill 的多種方式
 
-在 Claude Code 中使用 Skill 非常簡單，只要輸入：
+Skill 可以在多種不同的工具和環境中使用。選擇最適合你的方式，開始體驗 Skill 帶來的便利！
+
+---
+
+## 選擇適合你的工具
+
+<CardGroup cols={2}>
+  <Card title="Claude Code" icon="terminal" href="/skills/tools/claude-code">
+    **推薦給：** 熟悉終端機的開發者
+
+    - 功能最完整
+    - 支援所有 Skill 功能
+    - 可以整合到開發流程中
+  </Card>
+
+  <Card title="CLI 命令列" icon="rectangle-terminal" href="/skills/tools/cli">
+    **推薦給：** 喜歡自動化的使用者
+
+    - 可以寫成腳本
+    - 支援管道操作
+    - 跨平台使用
+  </Card>
+
+  <Card title="Cursor 編輯器" icon="i-cursor" href="/skills/tools/cursor">
+    **推薦給：** 使用 Cursor 的開發者
+
+    - 整合在編輯器中
+    - 搭配 Cursor AI 使用
+    - 無需切換視窗
+  </Card>
+
+  <Card title="Claude 桌面版" icon="desktop" href="/skills/tools/claude-desktop">
+    **推薦給：** 偏好圖形介面的使用者
+
+    - 視覺化操作
+    - 內建 Code 功能
+    - 無需使用終端機
+  </Card>
+
+  <Card title="Codex CLI" icon="microchip" href="/skills/tools/codex">
+    **推薦給：** 同時使用 OpenAI 工具的開發者
+
+    - 搭配 Codex 使用
+    - 結合不同 AI 的優點
+    - 靈活的工作流程
+  </Card>
+</CardGroup>
+
+---
+
+## 快速比較
+
+| 工具 | 適合對象 | 學習曲線 | 功能完整度 |
+|-----|---------|---------|-----------|
+| [Claude Code](/skills/tools/claude-code) | 開發者 | 中等 | 完整 |
+| [CLI](/skills/tools/cli) | 進階使用者 | 中等 | 完整 |
+| [Cursor](/skills/tools/cursor) | Cursor 使用者 | 簡單 | 完整 |
+| [Claude 桌面版](/skills/tools/claude-desktop) | 一般使用者 | 簡單 | 大部分 |
+| [Codex CLI](/skills/tools/codex) | 多工具使用者 | 中等 | 部分 |
+
+---
+
+## 我該從哪個開始？
+
+<AccordionGroup>
+  <Accordion title="我是程式開發者">
+    推薦從 **Claude Code** 開始。它提供最完整的功能，而且可以輕鬆整合到你現有的開發流程中。
+
+    [前往 Claude Code 教學](/skills/tools/claude-code)
+  </Accordion>
+
+  <Accordion title="我不太會用終端機">
+    推薦使用 **Claude 桌面版**。它有友善的圖形介面，不需要輸入任何命令列指令。
+
+    [前往 Claude 桌面版教學](/skills/tools/claude-desktop)
+  </Accordion>
+
+  <Accordion title="我已經在用 Cursor">
+    直接在 **Cursor** 中使用即可！你可以在 Cursor 的內建終端機中執行 Skill。
+
+    [前往 Cursor 教學](/skills/tools/cursor)
+  </Accordion>
+
+  <Accordion title="我想自動化我的工作流程">
+    推薦學習 **CLI** 的使用方式，可以將 Skill 整合到 Shell 腳本和自動化流程中。
+
+    [前往 CLI 教學](/skills/tools/cli)
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 通用的 Skill 使用方式
+
+不論你使用哪種工具，Skill 的基本使用方式都是相同的：
+
+### 基本語法
 
 ```
 /skill名稱
 ```
 
----
-
-## 使用步驟
-
-<Steps>
-  <Step title="開啟 Claude Code">
-    在終端機中輸入 `claude` 啟動 Claude Code
-  </Step>
-  <Step title="輸入 Skill 指令">
-    直接輸入你想使用的 Skill，例如 `/commit`
-  </Step>
-  <Step title="等待執行">
-    Claude 會自動執行 Skill 中定義的所有步驟
-  </Step>
-  <Step title="查看結果">
-    執行完成後，Claude 會顯示執行結果
-  </Step>
-</Steps>
-
----
-
-## 常見的內建 Skill
-
-以下是 Claude Code 提供的常用內建 Skill：
-
-### /commit - 提交程式碼
-
-<Card title="/commit" icon="code-commit">
-**用途**：自動提交程式碼變更
-
-這個 Skill 會：
-1. 檢查目前的變更內容
-2. 自動生成適當的提交訊息
-3. 完成 Git 提交流程
-</Card>
-
-**使用方式**：
-```
-/commit
-```
-
----
-
-### /review-pr - 審查拉取請求
-
-<Card title="/review-pr" icon="code-pull-request">
-**用途**：審查 Pull Request
-
-這個 Skill 會：
-1. 分析 PR 的變更內容
-2. 找出潛在的問題
-3. 提供改進建議
-</Card>
-
-**使用方式**：
-```
-/review-pr 123
-```
-
-其中 `123` 是 PR 的編號。
-
----
-
-## 帶參數的使用方式
-
-許多 Skill 可以接受額外的參數，讓功能更加靈活：
-
-### 基本語法
+### 帶參數
 
 ```
 /skill名稱 參數
 ```
 
-### 範例
+### 常用範例
 
-| 指令 | 說明 |
+| 指令 | 功能 |
 |-----|------|
+| `/commit` | 自動提交程式碼 |
 | `/review-pr 123` | 審查編號 123 的 PR |
-| `/check-file README.md` | 檢查特定檔案 |
-| `/search 關鍵字` | 搜尋特定內容 |
-
----
-
-## 查看可用的 Skill
-
-想知道目前有哪些 Skill 可以使用？輸入：
-
-```
-/help
-```
-
-這會列出所有可用的 Skill 及其說明。
-
----
-
-## 實用使用情境
-
-### 情境一：每日工作開始
-
-早上開始工作時，可以使用 Skill 快速了解專案狀態：
-
-```
-/status
-```
-
-### 情境二：完成一個功能
-
-當你完成一個功能，準備提交程式碼時：
-
-```
-/commit
-```
-
-### 情境三：審查同事的程式碼
-
-收到同事的 PR 需要審查時：
-
-```
-/review-pr 42
-```
-
-### 情境四：下班前總結
-
-下班前整理今天的工作內容：
-
-```
-/daily-summary
-```
-
----
-
-## 使用技巧
-
-<AccordionGroup>
-  <Accordion title="善用 Tab 自動完成">
-    輸入 `/` 後按 Tab 鍵，可能會顯示可用的 Skill 列表（視環境而定）。
-  </Accordion>
-
-  <Accordion title="參數可以很靈活">
-    Skill 的參數不一定要是數字，也可以是檔案名稱、路徑或其他文字。
-  </Accordion>
-
-  <Accordion title="可以連續使用多個 Skill">
-    你可以連續執行多個 Skill 來完成一系列工作，例如先 `/check` 再 `/commit`。
-  </Accordion>
-
-  <Accordion title="不確定時就問 Claude">
-    如果不確定某個 Skill 怎麼用，可以直接問 Claude：「/commit 這個指令要怎麼使用？」
-  </Accordion>
-</AccordionGroup>
-
----
-
-## 常見問題
-
-<AccordionGroup>
-  <Accordion title="Skill 沒有反應怎麼辦？">
-    請確認：
-    1. 指令名稱是否正確（注意大小寫）
-    2. 是否在 Claude Code 環境中執行
-    3. 如果是自訂 Skill，檔案是否放在正確位置
-  </Accordion>
-
-  <Accordion title="可以取消正在執行的 Skill 嗎？">
-    可以按 `Ctrl + C` 來中斷執行。
-  </Accordion>
-
-  <Accordion title="Skill 執行失敗怎麼辦？">
-    查看錯誤訊息，通常會說明失敗的原因。常見原因包括：
-    - 缺少必要的參數
-    - 沒有對應的權限
-    - 檔案或資源不存在
-  </Accordion>
-</AccordionGroup>
+| `/help` | 查看可用的 Skill |
 
 ---
 
 ## 下一步
 
-學會使用 Skill 後，讓我們來建立你的第一個自訂 Skill！
+選擇一個工具，開始你的 Skill 之旅吧！
 
-<Card title="建立你的第一個 Skill" icon="hammer" href="/skills/create-first-skill">
-  學習如何從零開始建立自己的 Skill
+如果你還沒決定，建議從 **Claude Code** 開始，它是學習 Skill 最直接的方式。
+
+<Card title="在 Claude Code 中使用 Skill" icon="terminal" href="/skills/tools/claude-code">
+  從最基礎的工具開始學習
 </Card>

@@ -1,0 +1,189 @@
+---
+title: "在 Cursor 中使用 Skill"
+description: "學習如何在 Cursor 編輯器中使用 Skill 功能"
+icon: "i-cursor"
+---
+
+## 什麼是 Cursor？
+
+**Cursor** 是一款以 AI 為核心的程式碼編輯器，基於 VS Code 開發，內建了強大的 AI 輔助功能。你可以在 Cursor 中使用 Skill 來加速開發流程。
+
+<Info>
+Cursor 內建的 AI 功能與 Claude Code 的 Skill 可以互補使用，讓你的開發效率更上一層樓。
+</Info>
+
+---
+
+## 前置需求
+
+<Steps>
+  <Step title="下載並安裝 Cursor">
+    前往 [Cursor 官網](https://cursor.sh/) 下載適合你作業系統的版本
+
+    支援：macOS、Windows、Linux
+  </Step>
+  <Step title="設定 Cursor 帳號">
+    首次啟動時，需要註冊或登入 Cursor 帳號
+  </Step>
+  <Step title="安裝 Claude Code（選用）">
+    如果要使用完整的 Skill 功能，建議安裝 Claude Code CLI
+
+    [查看安裝說明](/skills/tools/claude-code)
+  </Step>
+</Steps>
+
+---
+
+## 在 Cursor 中使用 Skill 的方式
+
+### 方式一：使用內建終端機
+
+Cursor 內建終端機，你可以直接在其中執行 Claude Code：
+
+1. 按下 `` Ctrl + ` ``（Windows/Linux）或 `` Cmd + ` ``（macOS）開啟終端機
+2. 輸入 `claude` 進入互動模式
+3. 執行 Skill 指令，例如 `/commit`
+
+### 方式二：使用 Cursor 的 AI 功能
+
+Cursor 本身也支援類似 Skill 的 AI 指令：
+
+1. 按下 `Cmd + K`（macOS）或 `Ctrl + K`（Windows/Linux）
+2. 輸入你想要執行的任務
+3. Cursor AI 會協助你完成
+
+---
+
+## Cursor 快捷鍵速查
+
+| 功能 | macOS | Windows/Linux |
+|-----|-------|---------------|
+| 開啟終端機 | `` Cmd + ` `` | `` Ctrl + ` `` |
+| AI 對話 | `Cmd + K` | `Ctrl + K` |
+| AI 編輯選取內容 | `Cmd + L` | `Ctrl + L` |
+| 開啟命令面板 | `Cmd + Shift + P` | `Ctrl + Shift + P` |
+
+---
+
+## 設定 Claude Code 整合
+
+### 步驟 1：確認 Claude Code 已安裝
+
+在 Cursor 終端機中輸入：
+
+```bash
+claude --version
+```
+
+### 步驟 2：登入 Claude Code
+
+```bash
+claude login
+```
+
+### 步驟 3：測試 Skill
+
+```bash
+claude "/commit"
+```
+
+---
+
+## 實用工作流程
+
+### 工作流程一：程式碼審查
+
+1. 在 Cursor 中開啟專案
+2. 使用 Git 面板查看變更
+3. 開啟終端機執行：
+   ```
+   claude "/review-code"
+   ```
+4. 根據 Claude 的建議修改程式碼
+
+### 工作流程二：快速提交
+
+1. 完成程式碼修改
+2. 開啟終端機
+3. 執行：
+   ```
+   claude "/commit"
+   ```
+4. Claude 會自動生成提交訊息並提交
+
+### 工作流程三：文件生成
+
+1. 選取需要生成文件的程式碼
+2. 按下 `Cmd + K` / `Ctrl + K`
+3. 輸入「為這段程式碼生成文件」
+4. 或使用自訂 Skill：
+   ```
+   claude "/generate-docs"
+   ```
+
+---
+
+## Cursor 設定建議
+
+### 推薦的設定
+
+在 Cursor 設定中（`Cmd + ,` 或 `Ctrl + ,`），建議調整：
+
+```json
+{
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "editor.formatOnSave": true,
+  "files.autoSave": "afterDelay"
+}
+```
+
+### 安裝推薦擴充功能
+
+| 擴充功能 | 用途 |
+|---------|------|
+| GitLens | 強化 Git 功能 |
+| Error Lens | 即時顯示錯誤 |
+| Path Intellisense | 路徑自動完成 |
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="Cursor 終端機找不到 claude 指令">
+    可能是 PATH 設定問題。解決方法：
+
+    1. 重新啟動 Cursor
+    2. 或在終端機中手動設定 PATH：
+       ```bash
+       export PATH="$PATH:$(npm bin -g)"
+       ```
+  </Accordion>
+
+  <Accordion title="Cursor AI 和 Claude Code 有什麼差別？">
+    - **Cursor AI**：直接整合在編輯器中，適合快速的程式碼編輯和生成
+    - **Claude Code**：功能更完整，支援自訂 Skill 和複雜的工作流程
+
+    建議兩者搭配使用，發揮最大效益。
+  </Accordion>
+
+  <Accordion title="如何在 Cursor 中使用自訂 Skill？">
+    1. 在專案中建立 `.claude/skills/` 資料夾
+    2. 加入你的 Skill 檔案
+    3. 在 Cursor 終端機中執行 `claude` 然後使用 Skill
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 相關資源
+
+<CardGroup cols={2}>
+  <Card title="Cursor 官網" icon="arrow-pointer" href="https://cursor.sh/">
+    下載和了解更多 Cursor 功能
+  </Card>
+  <Card title="Cursor 文件" icon="book" href="https://cursor.sh/docs">
+    查看 Cursor 官方文件
+  </Card>
+</CardGroup>

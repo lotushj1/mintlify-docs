@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Skill 入門指南",
+  "name": "Skill 學習網站",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -21,9 +21,24 @@
             ]
           },
           {
-            "group": "實際操作",
+            "group": "如何使用 Skill",
             "pages": [
               "skills/how-to-use",
+              {
+                "group": "各工具使用方式",
+                "pages": [
+                  "skills/tools/claude-code",
+                  "skills/tools/cli",
+                  "skills/tools/cursor",
+                  "skills/tools/codex",
+                  "skills/tools/claude-desktop"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "進階學習",
+            "pages": [
               "skills/create-first-skill"
             ]
           }
@@ -33,7 +48,8 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "/skills/what-is-skill"
   },
   "footer": {
     "socials": {
