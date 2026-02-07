@@ -1,39 +1,64 @@
 ---
 title: "Notion 串接應用"
-description: "學習如何串接 Notion，實現會議紀錄分析和音檔自動整理等實用功能"
+description: "學習如何使用 Whisper 將音檔轉成會議紀錄，並整理到 Notion 中"
 icon: "n"
 ---
 
-這個教學會帶你學習如何將 Skill 與 Notion 串接，實現自動化的資料處理流程。
+這個教學會帶你學習如何將音檔轉換成會議紀錄，並自動整理到 Notion 中。
+
+<Info>
+**本教學會使用到的工具：**
+- **OpenAI Whisper API** - 語音轉文字
+- **Claude** - 整理會議內容
+- **Notion** - 儲存會議紀錄
+
+請確保你已經準備好這些工具的 API Key。
+</Info>
 
 ---
 
-## 為什麼要串接 Notion？
+## 前置準備：申請必要的 API Key
 
-Notion 是許多人用來管理筆記、專案和知識庫的工具。透過串接 Skill，你可以：
+在開始之前，你需要申請以下 API Key：
 
-<CardGroup cols={2}>
-  <Card title="自動分析內容" icon="magnifying-glass-chart">
-    讓 AI 幫你分析會議紀錄、提取重點
-  </Card>
-  <Card title="自動整理資料" icon="folder-tree">
-    將外部資料自動整理並存入 Notion
-  </Card>
-  <Card title="格式轉換" icon="arrows-rotate">
-    將 Notion 內容轉換成其他格式輸出
-  </Card>
-  <Card title="批次處理" icon="layer-group">
-    一次處理多筆資料，節省時間
-  </Card>
-</CardGroup>
+### 1. 申請 OpenAI API Key（給 Whisper 使用）
 
----
+<Steps>
+  <Step title="前往 OpenAI 平台">
+    前往 [OpenAI Platform](https://platform.openai.com/) 並登入或註冊帳號
+  </Step>
+  <Step title="進入 API Keys 頁面">
+    點擊右上角的個人頭像 → **View API Keys**
 
-## 前置準備：設定 Notion API
+    或直接前往：https://platform.openai.com/api-keys
+  </Step>
+  <Step title="建立新的 API Key">
+    1. 點擊 **Create new secret key**
+    2. 輸入名稱，例如「Whisper 語音轉文字」
+    3. 點擊 **Create secret key**
+    4. **立即複製並保存** API Key（只會顯示一次！）
+  </Step>
+  <Step title="設定付費方式">
+    Whisper API 需要付費使用：
 
-在開始之前，你需要先設定 Notion API 連接。
+    1. 前往 **Settings** → **Billing**
+    2. 點擊 **Add payment method**
+    3. 新增信用卡資訊
 
-### 步驟 1：建立 Notion Integration
+    <Info>
+    **費用參考**：Whisper API 費用約為 $0.006/分鐘，一小時的音檔約 $0.36 美元。
+    </Info>
+  </Step>
+</Steps>
+
+<Warning>
+**重要提醒**：
+- API Key 只會顯示一次，請立即複製保存
+- 不要將 API Key 分享給他人或上傳到公開的程式碼庫
+- 建議設定用量限制，避免意外產生高額費用
+</Warning>
+
+### 2. 設定 Notion Integration
 
 <Steps>
   <Step title="前往 Notion 開發者頁面">
@@ -41,370 +66,358 @@ Notion 是許多人用來管理筆記、專案和知識庫的工具。透過串�
   </Step>
   <Step title="建立新的 Integration">
     1. 點擊 **New integration**
-    2. 輸入名稱，例如「AI Assistant」
+    2. 輸入名稱，例如「會議紀錄助手」
     3. 選擇要連接的 Workspace
     4. 點擊 **Submit** 建立
   </Step>
   <Step title="複製 API Token">
     建立完成後，複製 **Internal Integration Token**（以 `secret_` 開頭）
-
-    <Warning>
-    請妥善保管這個 Token，不要分享給他人或上傳到公開的程式碼庫。
-    </Warning>
   </Step>
   <Step title="授權 Integration 存取頁面">
-    1. 開啟你想要讓 AI 存取的 Notion 頁面
+    1. 開啟你想要存放會議紀錄的 Notion 頁面
     2. 點擊右上角的 **...** 選單
     3. 選擇 **Connections** → **Connect to** → 你剛建立的 Integration
   </Step>
 </Steps>
 
-### 步驟 2：記錄必要資訊
+---
 
-你需要準備以下資訊：
+## 快速開始：一鍵建置提示詞
 
-| 項目 | 說明 | 範例 |
-|-----|------|------|
-| API Token | Integration 的密鑰 | `secret_abc123...` |
-| Database ID | 資料庫的 ID | `a1b2c3d4...` |
-| Page ID | 頁面的 ID | `e5f6g7h8...` |
+<Note>
+**只要複製以下提示詞，貼到 Claude 對話框中，就可以快速完成建置！**
+</Note>
 
-<Tip>
-**如何找到 Database/Page ID？**
+### 提示詞一：建立會議紀錄整理 Skill
 
-在 Notion 中開啟頁面，網址格式為：
+複製以下內容，貼到 Claude 對話框：
+
+```text
+請幫我在專案中建立一個 Skill，用來整理會議錄音的逐字稿。
+
+請在 .claude/skills/ 資料夾中建立 meeting-transcribe.md 檔案，內容需要包含：
+
+1. 修正語音辨識錯誤和口語贅詞
+2. 整理成結構化的會議紀錄格式，包含：
+   - 會議資訊（日期、參與者）
+   - 會議摘要（3-5 句話）
+   - 討論議題和內容
+   - 關鍵決策
+   - 待辦事項（使用 checkbox 格式）
+   - 下次會議建議
+3. 輸出使用 Notion 支援的 Markdown 格式
+
+請直接建立這個檔案。
 ```
-https://www.notion.so/workspace/頁面標題-[ID]
+
+### 提示詞二：設定 Whisper 轉換環境
+
+複製以下內容，貼到 Claude 對話框：
+
+```text
+請幫我設定 Whisper 語音轉文字的環境。
+
+1. 檢查是否已安裝 Python 和 pip
+2. 安裝 openai 套件
+3. 建立一個 Python 腳本 whisper_transcribe.py，功能是：
+   - 讀取音檔路徑作為參數
+   - 使用 OpenAI Whisper API 轉換成文字
+   - 將結果儲存為 .txt 檔案
+   - 支援中文語音辨識
+
+我的 OpenAI API Key 是：[在這裡貼上你的 API Key]
+
+請直接建立這個腳本。
 ```
-最後的 32 個字元就是 ID。
-</Tip>
+
+### 提示詞三：完整的音檔轉會議紀錄流程
+
+複製以下內容，貼到 Claude 對話框：
+
+```text
+請幫我處理會議錄音檔案。
+
+音檔位置：[輸入你的音檔路徑，例如 ~/Downloads/meeting.mp3]
+
+請執行以下步驟：
+1. 使用 Whisper API 將音檔轉換成文字
+2. 使用 /meeting-transcribe Skill 整理成會議紀錄格式
+3. 顯示整理好的結果，讓我可以複製到 Notion
+
+如果過程中有任何錯誤，請告訴我如何解決。
+```
 
 ---
 
-## 應用一：會議紀錄分析
+## 詳細教學：使用 Whisper 轉換音檔
 
-這個 Skill 可以自動分析 Notion 中的會議紀錄，提取重點和待辦事項。
+### 步驟 1：安裝必要套件
+
+在終端機中執行：
+
+```bash
+pip install openai
+```
+
+### 步驟 2：設定 API Key
+
+<Tabs>
+  <Tab title="macOS / Linux">
+    在 `~/.bashrc` 或 `~/.zshrc` 中加入：
+
+    ```bash
+    export OPENAI_API_KEY="sk-你的API金鑰"
+    ```
+
+    然後執行：
+    ```bash
+    source ~/.bashrc  # 或 source ~/.zshrc
+    ```
+  </Tab>
+  <Tab title="Windows">
+    在 PowerShell 中設定：
+
+    ```powershell
+    [Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-你的API金鑰", "User")
+    ```
+
+    需要重新開啟 PowerShell 生效。
+  </Tab>
+</Tabs>
+
+### 步驟 3：建立轉換腳本
+
+建立 `whisper_transcribe.py` 檔案：
+
+```python
+import sys
+import os
+from openai import OpenAI
+
+def transcribe_audio(audio_path):
+    """使用 Whisper API 將音檔轉換成文字"""
+
+    # 檢查檔案是否存在
+    if not os.path.exists(audio_path):
+        print(f"錯誤：找不到檔案 {audio_path}")
+        return None
+
+    # 初始化 OpenAI 客戶端
+    client = OpenAI()
+
+    print(f"正在轉換：{audio_path}")
+    print("這可能需要幾分鐘，請稍候...")
+
+    # 開啟音檔並進行轉換
+    with open(audio_path, "rb") as audio_file:
+        transcript = client.audio.transcriptions.create(
+            model="whisper-1",
+            file=audio_file,
+            language="zh",  # 指定中文
+            response_format="text"
+        )
+
+    # 儲存結果
+    output_path = audio_path.rsplit(".", 1)[0] + ".txt"
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(transcript)
+
+    print(f"轉換完成！結果已儲存至：{output_path}")
+    return transcript
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("使用方式：python whisper_transcribe.py <音檔路徑>")
+        print("範例：python whisper_transcribe.py meeting.mp3")
+        sys.exit(1)
+
+    audio_path = sys.argv[1]
+    result = transcribe_audio(audio_path)
+
+    if result:
+        print("\n--- 轉換結果預覽 ---")
+        print(result[:500] + "..." if len(result) > 500 else result)
+```
+
+### 步驟 4：執行轉換
+
+```bash
+python whisper_transcribe.py your-meeting.mp3
+```
+
+轉換完成後，會生成一個 `.txt` 檔案，包含逐字稿內容。
+
+---
+
+## 整理會議紀錄：建立 Skill
 
 ### 建立 Skill 檔案
 
-在 `.claude/skills/` 資料夾中建立 `meeting-analysis.md`：
+在專案中建立 `.claude/skills/meeting-transcribe.md`：
 
 ```markdown
 ---
-description: 分析 Notion 中的會議紀錄
+description: 將會議逐字稿整理成結構化的會議紀錄
 ---
 
-請幫我分析會議紀錄並提取重點。
+請幫我將會議錄音的逐字稿整理成結構化的會議紀錄。
 
-## 任務說明
-
-我會提供 Notion 會議紀錄的內容，請幫我：
-
-### 1. 會議摘要
-用 3-5 句話總結這場會議的主要內容。
-
-### 2. 關鍵決策
-列出會議中做出的所有決策，格式：
-- **決策內容**：[決策說明]
-- **負責人**：[如果有提到]
-- **時限**：[如果有提到]
-
-### 3. 待辦事項
-提取所有提到的待辦事項，格式：
-- [ ] [待辦事項內容] - @[負責人] - [截止日期]
-
-### 4. 重要討論點
-列出會議中討論的重要議題和不同觀點。
-
-### 5. 下次會議建議
-根據這次會議內容，建議下次會議應該討論什麼。
-
-## 輸出格式
-
-請使用 Markdown 格式輸出，方便我直接貼回 Notion。
-```
-
-### 使用方式
-
-#### 方法一：直接貼上內容
-
-1. 從 Notion 複製會議紀錄內容
-2. 在 Claude 中輸入：
-   ```
-   /meeting-analysis
-
-   [貼上會議紀錄內容]
-   ```
-
-#### 方法二：搭配 Notion MCP
-
-如果你有設定 [Notion MCP](https://github.com/makenotion/notion-mcp-server)，可以直接讀取：
-
-```
-/meeting-analysis
-
-請從我的 Notion 讀取「2024/02/07 週會紀錄」這個頁面的內容來分析
-```
-
-### 範例輸出
-
-```markdown
-## 會議摘要
-
-本次會議主要討論了 Q2 產品路線圖，確認了三個主要功能的優先順序，
-並針對資源分配達成共識。團隊同意將「用戶儀表板改版」列為最高優先級。
-
-## 關鍵決策
-
-- **決策內容**：Q2 優先開發用戶儀表板改版
-- **負責人**：產品團隊
-- **時限**：4 月底完成設計稿
-
-- **決策內容**：暫緩 API v3 開發
-- **負責人**：工程團隊
-- **時限**：延至 Q3
-
-## 待辦事項
-
-- [ ] 完成儀表板 wireframe - @小明 - 2/15
-- [ ] 準備用戶研究報告 - @小華 - 2/20
-- [ ] 更新專案時程表 - @PM - 2/10
-
-## 重要討論點
-
-1. **資源分配**：工程團隊提出人力不足的擔憂，建議縮小 MVP 範圍
-2. **用戶回饋**：根據最近的調查，60% 用戶反映儀表板難以使用
-
-## 下次會議建議
-
-- 檢視 wireframe 初稿
-- 確認技術可行性評估結果
-```
-
----
-
-## 應用二：音檔自動整理
-
-這個 Skill 可以將錄音內容轉換成文字，並自動整理到 Notion 中。
-
-### 前置準備
-
-音檔處理需要先將錄音轉成文字。你可以使用：
-
-| 工具 | 說明 | 適合情境 |
-|-----|------|---------|
-| Whisper | OpenAI 的語音辨識模型 | 高準確度需求 |
-| 內建語音輸入 | macOS/Windows 內建功能 | 快速簡單 |
-| 第三方服務 | Otter.ai、雅婷逐字稿等 | 中文優化 |
-
-### 建立 Skill 檔案
-
-在 `.claude/skills/` 資料夾中建立 `audio-to-notion.md`：
-
-```markdown
----
-description: 將音檔逐字稿整理成 Notion 格式
----
-
-請幫我將錄音逐字稿整理成結構化的 Notion 頁面內容。
-
-## 輸入內容
-
-我會提供錄音的逐字稿（可能包含語音辨識的錯誤），請幫我：
+## 處理步驟
 
 ### 1. 修正與潤飾
 - 修正明顯的語音辨識錯誤
-- 移除口語贅詞（嗯、啊、那個）
+- 移除口語贅詞（嗯、啊、那個、然後）
 - 保持原意，讓文字更通順
 
-### 2. 結構化整理
+### 2. 提取會議資訊
+- 會議日期和時間（如果有提到）
+- 參與者名單
+- 會議主題
 
-根據內容類型，整理成適當的格式：
+### 3. 整理成以下格式
 
-**如果是會議錄音：**
-- 會議資訊（日期、參與者）
-- 討論主題
-- 各議題的討論內容
-- 結論與待辦事項
+## 📋 會議紀錄
 
-**如果是訪談錄音：**
-- 訪談資訊
-- Q&A 格式整理
-- 重點摘要
+**日期**：[日期]
+**參與者**：[參與者列表]
+**主題**：[會議主題]
 
-**如果是個人筆記/想法：**
-- 主題分類
-- 重點條列
-- 延伸思考
+### 會議摘要
+[用 3-5 句話總結這場會議的主要內容]
 
-### 3. 輸出格式
+### 討論議題
 
-請使用 Notion 支援的 Markdown 格式，包含：
-- 適當的標題層級（H1, H2, H3）
-- 條列式重點
-- Toggle 區塊（用於詳細內容）
-- Callout 區塊（用於重要提醒）
+#### 議題一：[議題名稱]
+[討論內容摘要]
 
-## 額外要求
+#### 議題二：[議題名稱]
+[討論內容摘要]
 
-- 如果聽不清楚或不確定的內容，用 [?] 標記
-- 保留專有名詞的原始說法
-- 時間戳記如果有提供，請保留
+### 關鍵決策
+- **決策內容**：[決策說明]
+- **負責人**：[負責人]
+- **時限**：[截止日期]
+
+### 待辦事項
+- [ ] [待辦事項] - @[負責人] - [截止日期]
+- [ ] [待辦事項] - @[負責人] - [截止日期]
+
+### 下次會議建議
+- [建議討論的議題]
+
+---
+
+## 輸出要求
+- 使用繁體中文
+- 使用 Notion 支援的 Markdown 格式
+- 不確定的內容用 [?] 標記
+- 保留專有名詞和人名
 ```
 
-### 完整工作流程
+### 使用 Skill 整理逐字稿
+
+在 Claude 中輸入：
+
+```
+/meeting-transcribe
+
+[貼上 Whisper 轉換後的逐字稿內容]
+```
+
+---
+
+## 完整工作流程
 
 <Steps>
-  <Step title="錄製或取得音檔">
-    - 使用手機或電腦錄製會議/訪談
-    - 或從其他來源取得音檔
+  <Step title="錄製會議">
+    使用手機或電腦錄製會議，建議使用安靜的環境以提高辨識準確度
   </Step>
-  <Step title="轉換成逐字稿">
-    **使用 Whisper（推薦）：**
+  <Step title="使用 Whisper 轉換">
     ```bash
-    # 安裝 whisper
-    pip install openai-whisper
-
-    # 轉換音檔
-    whisper meeting.mp3 --language Chinese --output_format txt
+    python whisper_transcribe.py meeting.mp3
     ```
-
-    **或使用線上服務：**
-    - 上傳到 Otter.ai 或雅婷逐字稿
-    - 下載文字檔
   </Step>
   <Step title="使用 Skill 整理">
-    ```
-    /audio-to-notion
-
-    [貼上逐字稿內容]
-    ```
+    將逐字稿貼到 Claude，使用 `/meeting-transcribe` Skill 整理
   </Step>
-  <Step title="貼到 Notion">
-    將整理好的內容複製到 Notion 頁面
+  <Step title="複製到 Notion">
+    將整理好的會議紀錄複製到 Notion 頁面
   </Step>
 </Steps>
 
-### 進階：自動化腳本
+---
 
-如果你經常需要處理音檔，可以建立自動化腳本：
+## 進階：自動化腳本
 
-```bash
-#!/bin/bash
-# audio-to-notion.sh
+如果你經常需要處理會議錄音，可以建立一個一鍵完成的腳本：
 
-# 1. 轉換音檔為文字
-echo "正在轉換音檔..."
-whisper "$1" --language Chinese --output_format txt
+### 提示詞：建立自動化腳本
 
-# 2. 讀取逐字稿
-TRANSCRIPT=$(cat "${1%.*}.txt")
+複製以下內容，貼到 Claude 對話框：
 
-# 3. 使用 Claude 處理（需要 Claude CLI）
-echo "正在整理內容..."
-claude "/audio-to-notion
+```text
+請幫我建立一個自動化腳本 process_meeting.sh，功能是：
 
-$TRANSCRIPT"
-```
+1. 接收音檔路徑作為參數
+2. 使用 whisper_transcribe.py 轉換音檔
+3. 讀取轉換後的 .txt 檔案
+4. 自動呼叫 Claude 使用 /meeting-transcribe Skill 整理
+5. 將結果輸出到終端機
 
-使用方式：
-```bash
-./audio-to-notion.sh meeting-recording.mp3
+請確保腳本有適當的錯誤處理和進度提示。
 ```
 
 ---
 
-## 應用三：Notion 內容格式轉換
+## Whisper API 費用說明
 
-這個 Skill 可以將 Notion 內容轉換成其他格式。
+| 音檔長度 | 預估費用（美元） |
+|---------|----------------|
+| 10 分鐘 | $0.06 |
+| 30 分鐘 | $0.18 |
+| 1 小時 | $0.36 |
+| 2 小時 | $0.72 |
 
-### 建立 Skill 檔案
-
-在 `.claude/skills/` 資料夾中建立 `notion-transform.md`：
-
-```markdown
----
-description: 將 Notion 內容轉換成指定格式
----
-
-請幫我將 Notion 內容轉換格式。
-
-## 支援的轉換類型
-
-根據我指定的目標格式進行轉換：
-
-### 轉換成簡報大綱
-- 提取主要標題作為投影片標題
-- 每個段落整理成 3-5 個重點
-- 建議適合的視覺元素
-
-### 轉換成電子郵件
-- 撰寫正式/非正式版本
-- 包含主旨建議
-- 適當的開頭和結尾
-
-### 轉換成社群貼文
-- 精簡成適合社群的長度
-- 加入適當的 emoji
-- 建議 hashtag
-
-### 轉換成部落格文章
-- 加入引言和結論
-- 優化 SEO 標題
-- 建議配圖方向
-
-## 使用方式
-
-請告訴我：
-1. 要轉換的內容
-2. 目標格式
-3. 任何特殊要求（語氣、長度等）
-```
-
-### 使用範例
-
-```
-/notion-transform
-
-請將以下產品規格文件轉換成給客戶看的簡報大綱：
-
-[貼上 Notion 內容]
-
-目標：5-7 張投影片，強調產品優勢
-```
+<Tip>
+**省錢建議**：
+- 只轉換重要的會議錄音
+- 壓縮音檔以減少檔案大小（不影響計費，但可加快上傳速度）
+- 設定 OpenAI 帳號的月度用量上限
+</Tip>
 
 ---
 
 ## 常見問題
 
 <AccordionGroup>
-  <Accordion title="如何處理長時間的錄音？">
-    建議將長錄音分段處理：
-    1. 使用音訊編輯軟體分割成 10-15 分鐘的段落
-    2. 分別轉換成逐字稿
-    3. 依序使用 Skill 整理
-    4. 最後合併成完整文件
+  <Accordion title="API Key 錯誤怎麼辦？">
+    常見錯誤和解決方式：
+    - **Invalid API Key**：確認 API Key 正確，沒有多餘的空格
+    - **Insufficient quota**：檢查 OpenAI 帳號餘額，可能需要加值
+    - **Rate limit exceeded**：等待幾分鐘後再試，或升級帳號方案
   </Accordion>
 
-  <Accordion title="中文語音辨識不準確怎麼辦？">
-    幾個建議：
-    - 使用專門針對中文優化的服務（如雅婷逐字稿）
-    - 在 Skill 中請 Claude 協助修正常見的辨識錯誤
-    - 錄音時盡量在安靜環境，說話清晰
+  <Accordion title="中文辨識不準確？">
+    幾個改善建議：
+    - 確保錄音環境安靜，減少背景噪音
+    - 說話速度適中，發音清晰
+    - 如果有專有名詞，可以在 Skill 中請 Claude 協助修正
   </Accordion>
 
-  <Accordion title="可以直接讓 AI 存取我的 Notion 嗎？">
-    可以！設定 Notion MCP Server 後，AI 可以直接讀取和寫入 Notion：
-    - [Notion MCP Server](https://github.com/makenotion/notion-mcp-server)
-
-    設定完成後，你可以說：「請幫我讀取 Notion 中的 XX 頁面」
+  <Accordion title="音檔太大無法上傳？">
+    Whisper API 限制單一檔案最大 25MB。解決方式：
+    - 使用 ffmpeg 壓縮音檔：`ffmpeg -i input.mp3 -b:a 64k output.mp3`
+    - 將長音檔分割成多個檔案
   </Accordion>
 
-  <Accordion title="如何自動將結果存回 Notion？">
-    目前需要手動複製貼上。如果想要完全自動化，可以：
-    1. 使用 Notion API 搭配腳本
-    2. 使用 Zapier/Make 等自動化工具
-    3. 設定 Notion MCP 讓 AI 直接寫入
+  <Accordion title="支援哪些音檔格式？">
+    Whisper API 支援以下格式：
+    - mp3, mp4, mpeg, mpga, m4a, wav, webm
+
+    如果你的檔案是其他格式，可以使用 ffmpeg 轉換：
+    ```bash
+    ffmpeg -i input.ogg output.mp3
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -413,14 +426,14 @@ description: 將 Notion 內容轉換成指定格式
 ## 延伸學習
 
 <CardGroup cols={2}>
+  <Card title="OpenAI Whisper API" icon="microphone" href="https://platform.openai.com/docs/guides/speech-to-text">
+    官方語音轉文字 API 文件
+  </Card>
   <Card title="Notion API 文件" icon="book" href="https://developers.notion.com/">
     了解更多 Notion API 功能
   </Card>
   <Card title="Notion MCP Server" icon="plug" href="https://github.com/makenotion/notion-mcp-server">
     讓 AI 直接存取 Notion
-  </Card>
-  <Card title="Whisper 使用教學" icon="microphone" href="https://github.com/openai/whisper">
-    OpenAI 語音辨識工具
   </Card>
   <Card title="自動化電子報系統" icon="envelope" href="/skills/examples/newsletter-automation">
     另一個實用的 Skill 範例
