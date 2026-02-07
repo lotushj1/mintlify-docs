@@ -4,28 +4,165 @@ description: "學習如何將音檔自動轉換成會議紀錄，並自動儲存
 icon: "n"
 ---
 
-這個教學會帶你學習如何建立一個自動化流程：只需要提供音檔位置，系統就會自動將音檔轉換成會議紀錄，並儲存到 Notion Database 中。
+## 這個教學適合誰？
+
+這份教學是為**完全沒有程式背景的人**設計的。如果你符合以下情況，這份教學非常適合你：
+
+- 你經常需要整理會議紀錄，但覺得手動整理很花時間
+- 你已經在使用 Notion 管理工作，想要讓流程更自動化
+- 你聽過 AI 可以幫忙做事，但不知道怎麼開始
 
 <Info>
-**本教學會使用到的工具：**
-- **OpenAI Whisper API** - 語音轉文字
-- **Claude** - 整理會議內容
-- **Notion MCP Server** - 自動化串接 Notion
+**完成這個教學後，你將能夠：**
+1. 錄完會議後，只要告訴 AI 音檔在哪裡
+2. AI 會自動把錄音轉成文字、整理成漂亮的會議紀錄
+3. 會議紀錄會自動出現在你的 Notion Database 中
 
-請確保你已經準備好這些工具的 API Key。
+整個過程你只需要說一句話，剩下的全部自動完成！
 </Info>
 
 ---
 
-## 前置準備：申請必要的 API Key
+## 什麼是 Skill？為什麼需要它？
 
-在開始之前，你需要申請以下 API Key：
+在開始之前，讓我們先了解一個重要的概念：**Skill**。
+
+<Note>
+**簡單來說，Skill 就像是你教給 AI 的「標準作業流程」（SOP）。**
+
+想像你有一位新助理，你需要教他怎麼整理會議紀錄。你會告訴他：
+- 會議紀錄要包含哪些項目（日期、參與者、討論內容...）
+- 格式應該長什麼樣子
+- 整理完要存到哪裡
+
+Skill 就是把這些指示寫下來，讓 AI 每次都能用同樣的方式幫你處理。
+</Note>
+
+### Skill 的好處
+
+| 沒有 Skill | 有 Skill |
+|-----------|---------|
+| 每次都要重新解釋你要什麼格式 | 只要說「用 XX Skill 處理」就好 |
+| AI 的輸出可能每次都不一樣 | 每次都會產出一致的格式 |
+| 需要花時間檢查和調整 | 結果符合你的需求，省下大量時間 |
+
+---
+
+## 推薦安裝的 Skill
+
+在開始建立會議紀錄 Skill 之前，我們先安裝一些實用的工具，讓後續的操作更輕鬆。
+
+### 1. Skill Creator：幫你快速建立 Skill
+
+**Skill Creator** 是一個幫助你建立 Skill 的 Skill（沒錯，聽起來有點繞口！）。有了它，你不需要知道 Skill 的技術細節，只要用白話描述你想要什麼，它就會幫你建立好。
+
+<Steps>
+  <Step title="安裝 Skill Creator">
+    複製以下內容，貼到 Claude 對話框中：
+
+    ```text
+    請幫我安裝 Skill Creator。
+
+    在 .claude/skills/ 資料夾中建立 skill-creator.md 檔案，內容如下：
+
+    ---
+    description: 幫助使用者建立新的 Skill
+    ---
+
+    你是一個 Skill 建立助手。當使用者描述他們想要的功能時，你會：
+
+    1. 詢問清楚他們的需求
+    2. 確認輸入和輸出格式
+    3. 在 .claude/skills/ 資料夾中建立對應的 Skill 檔案
+    4. 解釋如何使用這個新 Skill
+
+    請用簡單易懂的方式與使用者溝通，不要使用太多技術術語。
+    ```
+  </Step>
+  <Step title="測試 Skill Creator">
+    安裝完成後，你可以這樣使用：
+
+    ```text
+    /skill-creator
+
+    我想要一個幫我整理待辦事項的 Skill
+    ```
+
+    Skill Creator 會引導你完成建立過程。
+  </Step>
+</Steps>
+
+<Tip>
+**有了 Skill Creator 之後**，你可以用對話的方式建立任何 Skill，不需要了解技術細節。這是新手最好的起點！
+</Tip>
+
+### 2. 其他實用的 Skill 推薦
+
+以下是一些你可能會用到的 Skill，可以根據需求選擇安裝：
+
+<CardGroup cols={2}>
+  <Card title="Email 摘要助手" icon="envelope">
+    把長長的 email 往來整理成重點摘要
+  </Card>
+  <Card title="文件翻譯助手" icon="language">
+    將文件翻譯成指定語言，保持格式不變
+  </Card>
+  <Card title="週報產生器" icon="calendar-week">
+    根據你的工作紀錄自動產生週報
+  </Card>
+  <Card title="簡報大綱助手" icon="presentation-screen">
+    把想法整理成結構化的簡報大綱
+  </Card>
+</CardGroup>
+
+<Note>
+想要安裝這些 Skill？只要告訴 Claude：「請幫我建立一個 [Skill 名稱]」，它就會幫你建立！
+
+或者使用你剛安裝的 Skill Creator：`/skill-creator 我想要一個幫我整理週報的 Skill`
+</Note>
+
+---
+
+## 開始建立：會議紀錄自動化系統
+
+現在讓我們開始建立會議紀錄的自動化系統。這個系統會幫你：
+
+1. **語音轉文字**：把會議錄音變成文字
+2. **智慧整理**：把雜亂的對話整理成結構化的紀錄
+3. **自動儲存**：直接存到你的 Notion Database
+
+### 需要準備的工具
+
+<Info>
+**本教學會使用到的工具：**
+- **OpenAI Whisper API** - 這是 OpenAI 提供的語音轉文字服務，可以把錄音變成文字
+- **Claude** - AI 助手，負責整理會議內容
+- **Notion** - 你的筆記和資料庫工具
+
+別擔心，下面會一步步教你怎麼設定這些工具。
+</Info>
+
+---
+
+## 第一步：申請必要的 API Key
+
+<Note>
+**什麼是 API Key？**
+
+API Key 就像是一把「鑰匙」，讓不同的軟體可以互相溝通。當 Claude 想要使用 Whisper 的語音轉文字功能時，需要用這把鑰匙來證明「我有權限使用這個服務」。
+
+你可以把它想像成：你辦了一張會員卡，有了這張卡，店員才會提供服務給你。
+</Note>
 
 ### 1. 申請 OpenAI API Key（給 Whisper 使用）
+
+Whisper 是 OpenAI 公司提供的語音轉文字服務，我們需要先申請一個帳號。
 
 <Steps>
   <Step title="前往 OpenAI 平台">
     前往 [OpenAI Platform](https://platform.openai.com/) 並登入或註冊帳號
+
+    如果你已經有 ChatGPT 帳號，可以直接用同一個帳號登入。
   </Step>
   <Step title="進入 API Keys 頁面">
     點擊右上角的個人頭像 → **View API Keys**
@@ -34,71 +171,88 @@ icon: "n"
   </Step>
   <Step title="建立新的 API Key">
     1. 點擊 **Create new secret key**
-    2. 輸入名稱，例如「Whisper 語音轉文字」
+    2. 輸入名稱，例如「Whisper 語音轉文字」（這只是方便你記得這個 Key 是做什麼用的）
     3. 點擊 **Create secret key**
-    4. **立即複製並保存** API Key（只會顯示一次！）
+    4. **立即複製並保存** API Key（它只會顯示這一次！）
+
+    <Warning>
+    **非常重要**：這個 Key 只會顯示一次！請立刻複製到安全的地方（例如密碼管理器）。
+    如果沒有保存就關掉頁面，你需要刪除這個 Key 再建立一個新的。
+    </Warning>
   </Step>
   <Step title="設定付費方式">
-    Whisper API 需要付費使用：
+    Whisper API 是付費服務，需要綁定信用卡：
 
     1. 前往 **Settings** → **Billing**
     2. 點擊 **Add payment method**
     3. 新增信用卡資訊
 
     <Info>
-    **費用參考**：Whisper API 費用約為 $0.006/分鐘，一小時的音檔約 $0.36 美元。
+    **費用其實很便宜**：
+    - 10 分鐘的錄音：約 $0.06 美元（約台幣 2 元）
+    - 1 小時的錄音：約 $0.36 美元（約台幣 11 元）
+
+    一般會議錄音的費用大約就是一杯飲料錢，但可以省下你大量的整理時間！
     </Info>
   </Step>
 </Steps>
 
-<Warning>
-**重要提醒**：
-- API Key 只會顯示一次，請立即複製保存
-- 不要將 API Key 分享給他人或上傳到公開的程式碼庫
-- 建議設定用量限制，避免意外產生高額費用
-</Warning>
-
 ### 2. 設定 Notion Integration
+
+接下來，我們要讓 Claude 能夠存取你的 Notion。這需要建立一個「Integration」（你可以把它想成是「讓外部程式連接 Notion 的通道」）。
 
 <Steps>
   <Step title="前往 Notion 開發者頁面">
-    前往 [Notion Developers](https://www.notion.so/my-integrations) 並登入你的帳號
+    前往 [Notion Developers](https://www.notion.so/my-integrations) 並登入你的 Notion 帳號
   </Step>
   <Step title="建立新的 Integration">
     1. 點擊 **New integration**
     2. 輸入名稱，例如「會議紀錄助手」
-    3. 選擇要連接的 Workspace
+    3. 選擇要連接的 Workspace（如果你有多個工作區，選擇你要存放會議紀錄的那個）
     4. 點擊 **Submit** 建立
   </Step>
   <Step title="複製 API Token">
-    建立完成後，複製 **Internal Integration Token**（以 `secret_` 開頭）
+    建立完成後，你會看到一串以 `secret_` 開頭的文字，這就是你的 Token。請複製並保存起來。
   </Step>
   <Step title="授權 Integration 存取頁面">
+    **這一步很重要！** Integration 建立後，預設是沒有權限存取任何頁面的。你需要手動授權：
+
     1. 開啟你想要存放會議紀錄的 Notion 頁面
     2. 點擊右上角的 **...** 選單
-    3. 選擇 **Connections** → **Connect to** → 你剛建立的 Integration
+    3. 選擇 **Connections** → **Connect to** → 選擇你剛建立的「會議紀錄助手」
+
+    <Warning>
+    如果跳過這一步，AI 會告訴你「無法存取 Notion」。記得要授權！
+    </Warning>
   </Step>
 </Steps>
 
 ---
 
-## 建立 Notion 會議紀錄 Database
+## 第二步：建立 Notion 會議紀錄 Database
 
-在開始自動化流程之前，你需要在 Notion 中建立一個專門管理會議紀錄的 Database。
+現在我們要在 Notion 中建立一個專門存放會議紀錄的 Database。
 
-### 步驟 1：建立 Page 並授權 Integration
+<Note>
+**什麼是 Database？**
+
+Notion 的 Database 就像是一個 Excel 表格，但功能更強大。你可以用它來整理和篩選資料。
+在這個教學中，我們會用 Database 來管理所有的會議紀錄，方便你按日期、參與者或狀態來查找。
+</Note>
+
+### 步驟 1：建立 Page 並授權
 
 <Steps>
   <Step title="建立新的 Page">
-    在 Notion 中建立一個新的 Page，命名為「會議紀錄」或你喜歡的名稱
+    在 Notion 中建立一個新的 Page，命名為「會議紀錄」或任何你喜歡的名稱
   </Step>
   <Step title="授權 Integration 存取">
     1. 點擊頁面右上角的 **...** 選單
     2. 選擇 **Connections**
-    3. 點擊 **Connect to** → 選擇你在前置準備中建立的 Integration（例如「會議紀錄助手」）
+    3. 點擊 **Connect to** → 選擇「會議紀錄助手」
 
     <Warning>
-    **重要**：必須先完成授權，AI 才能存取這個頁面並建立 Database。
+    **一定要完成這一步！** 沒有授權的話，AI 無法在這個頁面建立或編輯任何內容。
     </Warning>
   </Step>
   <Step title="取得 Page ID">
@@ -107,15 +261,17 @@ icon: "n"
     https://www.notion.so/你的工作區/會議紀錄-abc123def456...
     ```
 
-    其中 `abc123def456...` 這串就是 Page ID，請記下來備用。
+    最後面那串亂碼（`abc123def456...`）就是 Page ID，請記下來備用。
+
+    <Tip>
+    不確定哪一段是 Page ID？把整個網址複製給 AI，它會幫你找出來。
+    </Tip>
   </Step>
 </Steps>
 
-### 步驟 2：讓 AI 協助建立 Database
+### 步驟 2：讓 AI 幫你建立 Database
 
-當你完成授權後，可以請 AI 在這個 Page 中建立符合格式的 Database。
-
-複製以下提示詞，貼到 Claude 對話框中：
+這是最輕鬆的部分！你只需要複製以下文字，貼到 Claude 對話框中：
 
 ```text
 請在我的 Notion 頁面中建立一個會議紀錄 Database。
@@ -135,186 +291,125 @@ Database 需要包含以下欄位：
 ```
 
 <Tip>
-**Database 建立完成後**，AI 會提供 Database ID，請記下來。後續的自動化流程會使用這個 ID 來新增會議紀錄。
+**AI 會幫你做什麼？**
+1. 在你指定的頁面建立一個 Database
+2. 設定好所有欄位
+3. 告訴你 Database ID（後面會用到）
+
+你只需要等待幾秒鐘，就能得到一個格式完美的 Database！
 </Tip>
 
 ### Database 欄位說明
 
-| 欄位名稱 | 類型 | 用途 |
-|---------|------|------|
-| 會議主題 | Title | Database 的標題欄位，顯示會議名稱 |
-| 日期 | Date | 記錄會議舉行的日期 |
-| 參與者 | Multi-select | 可選擇多位參與者，方便篩選 |
-| 狀態 | Select | 追蹤會議紀錄的處理狀態 |
-| 摘要 | Text | 簡短的會議重點摘要 |
-| 待辦事項 | Text | 從會議中整理出的行動項目 |
+| 欄位名稱 | 類型 | 用途說明 |
+|---------|------|---------|
+| 會議主題 | Title | 這是 Database 的標題欄位，會顯示在列表第一欄 |
+| 日期 | Date | 記錄會議是哪一天舉行的，方便按時間排序 |
+| 參與者 | Multi-select | 可以選擇多位參與者，之後可以篩選「某人參加過的所有會議」 |
+| 狀態 | Select | 追蹤這份紀錄的處理狀態（例如：還沒整理完、已完成、有事項需要追蹤） |
+| 摘要 | Text | 簡短的會議重點，讓你快速了解這場會議在討論什麼 |
+| 待辦事項 | Text | 會議中決定要做的事情，方便追蹤執行進度 |
 | 會議內容 | Text | 完整的結構化會議紀錄 |
 
 ---
 
-## 快速開始：一鍵建置提示詞
+## 第三步：建立會議紀錄 Skill
 
-<Note>
-**只要複製以下提示詞，貼到 Claude 對話框中，就可以快速完成建置！**
-</Note>
+現在我們要建立最重要的部分：一個可以自動處理會議錄音的 Skill。
 
-### 提示詞一：建立會議紀錄整理 Skill
+### 使用提示詞快速建立
 
-複製以下內容，貼到 Claude 對話框：
+複製以下內容，貼到 Claude 對話框中：
 
 ```text
 請幫我在專案中建立一個 Skill，用來處理會議錄音並自動儲存到 Notion。
 
-請在 .claude/skills/ 資料夾中建立 meeting-to-notion.md 檔案，內容需要包含：
+請在 .claude/skills/ 資料夾中建立 meeting-to-notion.md 檔案。
 
-## Skill 功能
-這個 Skill 會執行以下完整流程：
-1. 使用 Whisper API 將音檔轉換成逐字稿
-2. 整理成結構化的會議紀錄格式
-3. 自動將結果儲存到指定的 Notion Database
+這個 Skill 的功能：
+1. 接收音檔位置
+2. 使用 Whisper API 將音檔轉換成文字
+3. 整理成結構化的會議紀錄（包含：會議摘要、討論議題、關鍵決策、待辦事項）
+4. 自動儲存到我的 Notion Database
 
-## 會議紀錄格式
-- 會議資訊（日期、參與者）
-- 會議摘要（3-5 句話）
-- 討論議題和內容
-- 關鍵決策
-- 待辦事項（使用 checkbox 格式）
-- 下次會議建議
+我的 Notion Database ID 是：[貼上你的 Database ID]
 
-## Notion 設定
-Database ID：[填入你的 Database ID]
-
-請直接建立這個檔案。
+請幫我建立這個 Skill，並確保它會自動完成所有步驟。
 ```
 
-### 提示詞二：處理音檔並自動儲存到 Notion
+<Note>
+**Skill 建立完成後會發生什麼？**
 
-複製以下內容，貼到 Claude 對話框：
+以後你只需要說：
+```
+/meeting-to-notion
 
-```text
-請幫我處理會議錄音檔案，並自動儲存到 Notion。
-
-音檔位置：[輸入你的音檔路徑，例如 ~/Downloads/meeting.mp3]
-
-請執行以下步驟：
-1. 使用 Whisper API 將音檔轉換成文字
-2. 使用 /meeting-to-notion Skill 整理成會議紀錄格式
-3. 自動將整理好的會議紀錄儲存到 Notion Database
-
-完成後請告訴我 Notion 頁面的連結。
+音檔位置：~/Downloads/meeting.mp3
 ```
 
----
+AI 就會自動完成：錄音轉文字 → 整理成會議紀錄 → 存到 Notion。
 
-## 建立 Skill：自動化會議紀錄
-
-### Skill 檔案內容
-
-在專案中建立 `.claude/skills/meeting-to-notion.md`：
-
-```markdown
----
-description: 將會議音檔轉換成會議紀錄並自動儲存到 Notion
----
-
-請幫我處理會議錄音，並將整理好的會議紀錄儲存到 Notion Database。
-
-## 完整處理流程
-
-### 步驟 1：音檔轉文字
-使用 Whisper API 將音檔轉換成逐字稿：
-- 讀取指定的音檔
-- 使用 OpenAI Whisper API 進行語音辨識
-- 語言設定為中文（zh）
-
-### 步驟 2：整理會議紀錄
-將逐字稿整理成結構化格式：
-- 修正明顯的語音辨識錯誤
-- 移除口語贅詞（嗯、啊、那個、然後）
-- 提取會議資訊（日期、參與者、主題）
-
-### 步驟 3：儲存到 Notion
-自動將會議紀錄儲存到 Notion Database：
-- Database ID：[你的 Database ID]
-- 填入各欄位資料
-
-## 會議紀錄格式
-
-### 會議資訊
-- **日期**：[從內容推測或使用今天日期]
-- **參與者**：[列出所有提到的人名]
-- **主題**：[會議主要討論主題]
-
-### 會議摘要
-[用 3-5 句話總結這場會議的主要內容]
-
-### 討論議題
-
-#### 議題一：[議題名稱]
-[討論內容摘要]
-
-#### 議題二：[議題名稱]
-[討論內容摘要]
-
-### 關鍵決策
-- **決策內容**：[決策說明]
-- **負責人**：[負責人]
-- **時限**：[截止日期]
-
-### 待辦事項
-- [ ] [待辦事項] - @[負責人] - [截止日期]
-- [ ] [待辦事項] - @[負責人] - [截止日期]
-
-### 下次會議建議
-- [建議討論的議題]
+整個過程大約只需要幾分鐘（取決於錄音長度），而且你完全不需要做任何事！
+</Note>
 
 ---
 
-## 輸出要求
-- 使用繁體中文
-- 不確定的內容用 [?] 標記
-- 保留專有名詞和人名
-- 完成後提供 Notion 頁面連結
-```
+## 第四步：實際使用
 
----
+恭喜你完成了所有設定！現在讓我們來測試一下。
 
-## 完整工作流程
+### 完整操作流程
 
 <Steps>
-  <Step title="建立 Notion Database">
-    按照教學建立一個 Page，授權 Integration 存取，並請 AI 建立會議紀錄 Database
-  </Step>
-  <Step title="建立 Skill">
-    建立 meeting-to-notion Skill，並填入你的 Database ID
-  </Step>
   <Step title="錄製會議">
-    使用手機或電腦錄製會議，建議使用安靜的環境以提高辨識準確度
+    使用手機或電腦錄製會議。小技巧：
+    - 儘量在安靜的環境錄音
+    - 請參與者說話時靠近麥克風
+    - 錄音格式建議使用 mp3 或 m4a
   </Step>
-  <Step title="執行自動化流程">
-    告訴 AI 音檔位置，使用 `/meeting-to-notion` Skill：
-    ```
+  <Step title="告訴 AI 音檔位置">
+    把錄音檔放到電腦上，然後告訴 Claude：
+
+    ```text
     /meeting-to-notion
 
-    音檔位置：~/Downloads/meeting.mp3
+    音檔位置：~/Downloads/今日會議.mp3
     ```
+
+    （把路徑換成你實際的檔案位置）
+  </Step>
+  <Step title="等待處理完成">
+    AI 會開始處理，你會看到它：
+    1. 讀取音檔
+    2. 轉換成文字（這步可能需要幾分鐘）
+    3. 整理成會議紀錄格式
+    4. 儲存到 Notion
   </Step>
   <Step title="確認結果">
-    AI 會自動完成語音轉文字、整理會議紀錄、儲存到 Notion，並提供頁面連結讓你確認
+    處理完成後，AI 會給你 Notion 頁面的連結。點擊連結就可以看到整理好的會議紀錄！
   </Step>
 </Steps>
 
 ---
 
-## 進階設定：Notion MCP Server
+## 進階設定：讓 AI 直接操作 Notion
 
-為了讓 AI 能夠直接存取和操作 Notion，建議安裝 Notion MCP Server。
+如果你想要更順暢的體驗，可以安裝 Notion MCP Server。這會讓 AI 能夠直接讀寫你的 Notion，不需要透過其他方式。
+
+<Note>
+**什麼是 MCP Server？**
+
+MCP（Model Context Protocol）是一種讓 AI 連接外部工具的技術。安裝了 Notion MCP Server 之後，Claude 就可以直接操作你的 Notion，就像它有了一雙可以操作 Notion 的手。
+</Note>
 
 ### 安裝步驟
 
 <Steps>
-  <Step title="安裝 Notion MCP Server">
-    在 Claude 設定中加入 Notion MCP Server：
+  <Step title="開啟 Claude 設定">
+    找到 Claude 的設定檔案（通常在專案根目錄的 `.claude` 資料夾中）
+  </Step>
+  <Step title="加入 Notion MCP Server 設定">
+    在設定中加入以下內容：
 
     ```json
     {
@@ -329,35 +424,36 @@ description: 將會議音檔轉換成會議紀錄並自動儲存到 Notion
       }
     }
     ```
-  </Step>
-  <Step title="替換 Token">
-    將 `secret_你的Token` 替換成你在前置準備中取得的 Notion Integration Token
+
+    把 `secret_你的Token` 換成你在第一步取得的 Notion Integration Token。
   </Step>
   <Step title="重新啟動 Claude">
-    設定完成後重新啟動 Claude，讓 MCP Server 生效
+    設定完成後重新啟動 Claude，讓設定生效。
   </Step>
 </Steps>
 
 <Tip>
-安裝 MCP Server 後，AI 就可以直接讀取和寫入 Notion，不需要你手動複製貼上任何內容。
+安裝完成後，AI 就可以直接在 Notion 中建立頁面、編輯內容，完全不需要你手動操作！
 </Tip>
 
 ---
 
-## Whisper API 費用說明
+## 費用說明
 
-| 音檔長度 | 預估費用（美元） |
-|---------|----------------|
-| 10 分鐘 | $0.06 |
-| 30 分鐘 | $0.18 |
-| 1 小時 | $0.36 |
-| 2 小時 | $0.72 |
+使用這個自動化系統會產生一些費用，主要是 Whisper API 的語音轉文字服務：
+
+| 音檔長度 | 費用（美元） | 約台幣 |
+|---------|------------|-------|
+| 10 分鐘 | $0.06 | 約 2 元 |
+| 30 分鐘 | $0.18 | 約 6 元 |
+| 1 小時 | $0.36 | 約 11 元 |
+| 2 小時 | $0.72 | 約 22 元 |
 
 <Tip>
-**省錢建議**：
-- 只轉換重要的會議錄音
-- 壓縮音檔以減少檔案大小（不影響計費，但可加快上傳速度）
-- 設定 OpenAI 帳號的月度用量上限
+**省錢小技巧**：
+- 只處理重要的會議錄音
+- 在 OpenAI 帳號設定每月花費上限，避免意外超支
+- 會議前先列好議程，可以縮短會議時間 = 省錢！
 </Tip>
 
 ---
@@ -365,67 +461,102 @@ description: 將會議音檔轉換成會議紀錄並自動儲存到 Notion
 ## 常見問題
 
 <AccordionGroup>
-  <Accordion title="AI 無法存取 Notion 怎麼辦？">
-    請確認以下事項：
-    - Notion Integration 已正確建立
-    - 目標頁面已授權給 Integration（點擊 ... → Connections）
-    - MCP Server 設定中的 Token 正確無誤
-    - 已重新啟動 Claude 讓設定生效
+  <Accordion title="AI 說無法存取 Notion，怎麼辦？">
+    這通常是因為沒有授權。請確認：
+
+    1. **Notion Integration 有建立嗎？**
+       - 前往 https://www.notion.so/my-integrations 確認
+
+    2. **頁面有授權給 Integration 嗎？**
+       - 開啟 Notion 頁面 → 點擊右上角 ... → Connections
+       - 確認你的 Integration 有出現在列表中
+
+    3. **Token 正確嗎？**
+       - 確認 MCP Server 設定中的 Token 沒有打錯
+
+    4. **有重新啟動 Claude 嗎？**
+       - 修改設定後需要重新啟動才會生效
   </Accordion>
 
-  <Accordion title="API Key 錯誤怎麼辦？">
-    常見錯誤和解決方式：
-    - **Invalid API Key**：確認 API Key 正確，沒有多餘的空格
-    - **Insufficient quota**：檢查 OpenAI 帳號餘額，可能需要加值
-    - **Rate limit exceeded**：等待幾分鐘後再試，或升級帳號方案
-  </Accordion>
-
-  <Accordion title="中文辨識不準確？">
+  <Accordion title="語音轉文字的結果不太準確？">
     幾個改善建議：
-    - 確保錄音環境安靜，減少背景噪音
-    - 說話速度適中，發音清晰
-    - 如果有專有名詞，可以在 Skill 中請 Claude 協助修正
+
+    - **錄音品質**：儘量在安靜的環境錄音，避免背景噪音
+    - **說話清晰**：請參與者說話速度適中，發音清楚
+    - **麥克風距離**：說話者靠近麥克風效果會更好
+    - **專有名詞**：如果有特殊的專有名詞（公司名、產品名），可以在 Skill 中加入修正規則
   </Accordion>
 
-  <Accordion title="音檔太大無法上傳？">
-    Whisper API 限制單一檔案最大 25MB。解決方式：
-    - 使用 ffmpeg 壓縮音檔：`ffmpeg -i input.mp3 -b:a 64k output.mp3`
-    - 將長音檔分割成多個檔案
+  <Accordion title="音檔太大無法處理？">
+    Whisper API 限制單一檔案最大 25MB。如果你的檔案太大：
+
+    **方法一：壓縮音檔**
+    請 AI 幫你壓縮：「請幫我把這個音檔壓縮到 25MB 以下」
+
+    **方法二：分割音檔**
+    如果錄音很長，可以請 AI 幫你分割成多個小檔案分別處理
   </Accordion>
 
   <Accordion title="支援哪些音檔格式？">
     Whisper API 支援以下格式：
-    - mp3, mp4, mpeg, mpga, m4a, wav, webm
+    - mp3（最常見）
+    - m4a（iPhone 錄音預設格式）
+    - wav
+    - mp4、mpeg、mpga、webm
 
-    如果你的檔案是其他格式，可以使用 ffmpeg 轉換：
-    ```bash
-    ffmpeg -i input.ogg output.mp3
-    ```
+    如果你的檔案是其他格式，可以請 AI 幫你轉換。
   </Accordion>
 
-  <Accordion title="如何修改 Database 欄位？">
-    如果你想要調整 Database 的欄位，可以：
-    1. 直接在 Notion 中手動修改 Database 結構
-    2. 請 AI 協助修改：「請幫我在 Database 新增一個『會議類型』欄位」
-    3. 記得同步更新 Skill 中的格式說明
+  <Accordion title="可以修改會議紀錄的格式嗎？">
+    當然可以！你有幾個選擇：
+
+    1. **修改 Skill**：請 AI 幫你調整 meeting-to-notion Skill 的格式
+    2. **使用 Skill Creator**：用 `/skill-creator` 建立一個新的、符合你需求的 Skill
+    3. **手動調整**：在 Notion 中直接編輯已經產生的會議紀錄
+  </Accordion>
+
+  <Accordion title="我沒有程式背景，真的可以完成這個設定嗎？">
+    完全可以！這份教學就是為非工程師設計的。
+
+    你需要做的只有：
+    1. 複製貼上一些文字
+    2. 在網站上點擊幾個按鈕
+    3. 保存幾個密碼（API Key）
+
+    如果過程中遇到任何問題，直接把錯誤訊息貼給 Claude，它會幫你解決！
   </Accordion>
 </AccordionGroup>
 
 ---
 
-## 延伸學習
+## 下一步：探索更多可能
+
+現在你已經學會了如何建立自動化的會議紀錄系統。接下來，你可以：
 
 <CardGroup cols={2}>
-  <Card title="OpenAI Whisper API" icon="microphone" href="https://platform.openai.com/docs/guides/speech-to-text">
-    官方語音轉文字 API 文件
+  <Card title="建立更多 Skill" icon="wand-magic-sparkles" href="/skills/creating-skills">
+    學習如何建立自己的 Skill，自動化更多工作流程
   </Card>
-  <Card title="Notion API 文件" icon="book" href="https://developers.notion.com/">
-    了解更多 Notion API 功能
+  <Card title="探索 MCP Server" icon="plug" href="/mcp/introduction">
+    了解如何讓 AI 連接更多工具（Google Drive、Slack 等）
   </Card>
-  <Card title="Notion MCP Server" icon="plug" href="https://github.com/makenotion/notion-mcp-server">
-    讓 AI 直接存取 Notion
+  <Card title="Notion MCP Server" icon="n" href="https://github.com/makenotion/notion-mcp-server">
+    官方 Notion MCP Server 文件
   </Card>
   <Card title="自動化電子報系統" icon="envelope" href="/skills/examples/newsletter-automation">
-    另一個實用的 Skill 範例
+    另一個實用的自動化範例
   </Card>
 </CardGroup>
+
+<Tip>
+**記住**：你已經安裝了 Skill Creator！
+
+以後想要自動化任何工作，只要告訴 Claude：
+```
+/skill-creator
+
+我想要一個可以 [描述你想自動化的事情] 的 Skill
+```
+
+AI 會引導你完成整個建立過程。
+</Tip>
