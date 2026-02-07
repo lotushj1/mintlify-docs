@@ -53,7 +53,8 @@
           {
             "group": "支援資源",
             "pages": [
-              "skills/resources"
+              "skills/resources",
+              "skills/troubleshooting"
             ]
           }
         ]

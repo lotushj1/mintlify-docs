@@ -1,0 +1,392 @@
+---
+title: "疑難排解"
+description: "遇到問題了嗎？這裡收集了常見問題和解決方案"
+icon: "wrench"
+---
+
+## 快速診斷
+
+遇到問題時，先確認以下幾點：
+
+<Steps>
+  <Step title="Skill 檔案位置正確嗎？">
+    檔案必須放在 `.claude/skills/` 資料夾中
+  </Step>
+  <Step title="檔案格式正確嗎？">
+    - 副檔名是 `.md`
+    - 開頭有 `---` 包圍的設定區
+    - `description` 有填寫內容
+  </Step>
+  <Step title="有重新啟動嗎？">
+    某些工具需要重新啟動才會載入新的 Skill
+  </Step>
+</Steps>
+
+---
+
+## 常見問題分類
+
+<CardGroup cols={2}>
+  <Card title="Skill 無法使用" icon="circle-exclamation" href="#skill-無法使用">
+    輸入指令後沒有反應
+  </Card>
+  <Card title="API 連線問題" icon="plug-circle-exclamation" href="#api-連線問題">
+    無法連接外部服務
+  </Card>
+  <Card title="權限問題" icon="lock" href="#權限問題">
+    存取被拒絕或無法寫入
+  </Card>
+  <Card title="輸出不如預期" icon="file-circle-question" href="#輸出不如預期">
+    結果和想像的不一樣
+  </Card>
+</CardGroup>
+
+---
+
+## Skill 無法使用
+
+### 問題：輸入 `/skill名稱` 沒有反應
+
+<AccordionGroup>
+  <Accordion title="檢查 1：檔案位置是否正確">
+    **正確的資料夾結構**：
+    ```
+    你的專案/
+    ├── .claude/
+    │   └── skills/
+    │       └── your-skill.md  ← 檔案要放在這裡
+    ```
+
+    **常見錯誤**：
+    - ❌ 放在 `claude/skills/`（少了前面的點）
+    - ❌ 放在 `.claude/skill/`（少了 s）
+    - ❌ 放在專案根目錄
+
+    **解決方式**：
+    把檔案移到正確的位置 `.claude/skills/` 資料夾中
+  </Accordion>
+
+  <Accordion title="檢查 2：檔案格式是否正確">
+    **正確的格式**：
+    ```markdown
+    ---
+    description: 這是 Skill 的說明
+    ---
+
+    這裡是 Skill 的內容...
+    ```
+
+    **常見錯誤**：
+    - ❌ 沒有 `---` 包圍的設定區
+    - ❌ `description` 拼錯字
+    - ❌ 設定區的 `---` 不完整
+
+    **解決方式**：
+    確保檔案開頭有完整的設定區，包含 `description`
+  </Accordion>
+
+  <Accordion title="檢查 3：檔案副檔名是否正確">
+    **正確的副檔名**：`.md`
+
+    **常見錯誤**：
+    - ❌ `.txt`
+    - ❌ `.markdown`
+    - ❌ 沒有副檔名
+
+    **解決方式**：
+    將檔案重新命名，確保副檔名是 `.md`
+  </Accordion>
+
+  <Accordion title="檢查 4：是否需要重新啟動">
+    某些工具（如 Claude Desktop）需要重新啟動才會載入新的 Skill。
+
+    **解決方式**：
+    1. 完全關閉應用程式
+    2. 重新開啟
+    3. 再試一次 `/skill名稱`
+  </Accordion>
+</AccordionGroup>
+
+### 問題：Skill 列表中看不到我的 Skill
+
+<Accordion title="解決方式">
+  1. 輸入 `/help` 或 `/` 查看可用的 Skill 列表
+  2. 如果看不到，按照上面的檢查項目逐一確認
+  3. 如果都正確但還是看不到，嘗試：
+     - 重新啟動工具
+     - 建立一個新的 Skill 測試（確認功能正常）
+     - 檢查檔案是否有隱藏的特殊字元
+</Accordion>
+
+---
+
+## API 連線問題
+
+### 問題：無法連接 OpenAI API（Whisper 等服務）
+
+<AccordionGroup>
+  <Accordion title="錯誤訊息：Invalid API Key">
+    **可能原因**：
+    - API Key 輸入錯誤
+    - API Key 已過期或被撤銷
+    - 複製時多了空格或少了字元
+
+    **解決方式**：
+    1. 前往 [OpenAI Platform](https://platform.openai.com/api-keys)
+    2. 確認 API Key 是否有效
+    3. 如果不確定，建立一個新的 API Key
+    4. 重新設定，注意不要有多餘的空格
+  </Accordion>
+
+  <Accordion title="錯誤訊息：Insufficient quota / 額度不足">
+    **可能原因**：
+    - 帳號餘額不足
+    - 沒有設定付費方式
+
+    **解決方式**：
+    1. 前往 [OpenAI Billing](https://platform.openai.com/account/billing)
+    2. 確認已設定付費方式
+    3. 查看帳號餘額，必要時加值
+  </Accordion>
+
+  <Accordion title="錯誤訊息：Rate limit exceeded / 超過使用限制">
+    **可能原因**：
+    - 短時間內發送太多請求
+    - 帳號等級有使用限制
+
+    **解決方式**：
+    1. 等待幾分鐘後再試
+    2. 如果經常發生，考慮升級帳號方案
+    3. 在 Skill 中加入適當的間隔時間
+  </Accordion>
+
+  <Accordion title="錯誤訊息：Connection timeout / 連線逾時">
+    **可能原因**：
+    - 網路連線不穩定
+    - 服務暫時不可用
+
+    **解決方式**：
+    1. 檢查網路連線
+    2. 等待幾分鐘後再試
+    3. 查看 [OpenAI Status](https://status.openai.com/) 確認服務狀態
+  </Accordion>
+</AccordionGroup>
+
+### 問題：無法連接 Notion API
+
+<AccordionGroup>
+  <Accordion title="錯誤訊息：Unauthorized / 未授權">
+    **可能原因**：
+    - Integration Token 錯誤
+    - 頁面沒有授權給 Integration
+
+    **解決方式**：
+    1. 確認 Token 正確（以 `secret_` 開頭）
+    2. 開啟 Notion 頁面 → 點擊右上角 `...` → Connections
+    3. 確認你的 Integration 有出現在列表中
+    4. 如果沒有，點擊 **Connect to** 加入
+  </Accordion>
+
+  <Accordion title="錯誤訊息：Object not found / 找不到物件">
+    **可能原因**：
+    - Page ID 或 Database ID 錯誤
+    - 頁面已被刪除或移動
+
+    **解決方式**：
+    1. 重新複製頁面網址，取得正確的 ID
+    2. 確認頁面還存在
+    3. 確認 Integration 有權限存取該頁面
+  </Accordion>
+
+  <Accordion title="錯誤訊息：Validation error / 驗證錯誤">
+    **可能原因**：
+    - 資料格式不符合 Database 欄位設定
+    - 必填欄位沒有填寫
+
+    **解決方式**：
+    1. 檢查 Database 的欄位設定
+    2. 確認 Skill 中的資料格式正確
+    3. 確認所有必填欄位都有值
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 權限問題
+
+### 問題：無法建立或寫入檔案
+
+<AccordionGroup>
+  <Accordion title="錯誤訊息：Permission denied / 權限被拒絕">
+    **可能原因**：
+    - 資料夾沒有寫入權限
+    - 檔案被其他程式佔用
+
+    **解決方式**：
+
+    **Mac / Linux**：
+    ```bash
+    # 確認資料夾權限
+    ls -la .claude/
+
+    # 如果需要，修改權限
+    chmod 755 .claude/
+    chmod 755 .claude/skills/
+    ```
+
+    **Windows**：
+    1. 右鍵點擊資料夾 → 內容 → 安全性
+    2. 確認你的使用者有「寫入」權限
+  </Accordion>
+
+  <Accordion title="錯誤訊息：File is locked / 檔案被鎖定">
+    **可能原因**：
+    - 檔案正被其他程式開啟
+    - 同步軟體（如 Dropbox）正在處理
+
+    **解決方式**：
+    1. 關閉可能正在使用該檔案的程式
+    2. 等待同步軟體完成同步
+    3. 重新嘗試操作
+  </Accordion>
+</AccordionGroup>
+
+### 問題：MCP Server 無法存取外部服務
+
+<Accordion title="解決方式">
+  1. **確認 MCP Server 設定正確**
+     - 檢查 `settings.json` 或相關設定檔
+     - 確認 Token 和 API Key 正確
+
+  2. **確認已重新啟動**
+     - 修改 MCP 設定後必須重新啟動 Claude
+
+  3. **確認服務有授權**
+     - 例如 Notion 需要在頁面中授權 Integration
+     - Google 服務需要完成 OAuth 授權流程
+</Accordion>
+
+---
+
+## 輸出不如預期
+
+### 問題：每次輸出的格式都不一樣
+
+<Accordion title="解決方式">
+  在 Skill 中加入更明確的格式要求：
+
+  ```markdown
+  ## 輸出格式（請嚴格遵守）
+
+  請使用以下格式輸出，不要有任何變化：
+
+  ### 標題
+  [內容]
+
+  ### 重點
+  - 項目一
+  - 項目二
+  ```
+
+  **小技巧**：
+  - 提供具體的範例
+  - 使用「請嚴格遵守」「必須」等強調詞
+  - 說明「不要」做的事情
+</Accordion>
+
+### 問題：輸出內容不夠詳細
+
+<Accordion title="解決方式">
+  在 Skill 中加入詳細程度的要求：
+
+  ```markdown
+  ## 詳細程度要求
+
+  - 每個段落至少 100 字
+  - 每個重點要有說明和例子
+  - 不要只列條目，要有完整的解釋
+  ```
+</Accordion>
+
+### 問題：輸出包含不想要的內容
+
+<Accordion title="解決方式">
+  明確告訴 AI「不要」做什麼：
+
+  ```markdown
+  ## 注意事項
+
+  請不要：
+  - 不要加入 emoji
+  - 不要使用英文
+  - 不要加入額外的建議或評論
+  - 不要在結尾加上「希望這對你有幫助」之類的話
+  ```
+</Accordion>
+
+---
+
+## 錯誤訊息對照表
+
+| 錯誤訊息 | 可能原因 | 快速解決 |
+|---------|---------|---------|
+| `Skill not found` | 檔案位置或名稱錯誤 | 確認檔案在 `.claude/skills/` 中 |
+| `Invalid API Key` | API Key 錯誤 | 重新取得並設定 API Key |
+| `Insufficient quota` | 額度不足 | 加值或等待額度重置 |
+| `Rate limit exceeded` | 請求太頻繁 | 等待幾分鐘後再試 |
+| `Unauthorized` | 沒有授權 | 確認 Token 和授權設定 |
+| `Permission denied` | 沒有寫入權限 | 修改資料夾權限 |
+| `Connection timeout` | 網路問題 | 檢查網路連線 |
+| `Object not found` | ID 錯誤或物件不存在 | 確認 ID 正確且物件存在 |
+
+---
+
+## 還是無法解決？
+
+<Steps>
+  <Step title="收集錯誤資訊">
+    把完整的錯誤訊息複製下來，包括：
+    - 你輸入的指令
+    - 完整的錯誤訊息
+    - 使用的工具和版本
+  </Step>
+  <Step title="詢問 AI 助手">
+    把錯誤資訊貼給 Claude，請它幫你分析：
+
+    ```
+    我在使用 Skill 時遇到這個錯誤：
+    [貼上錯誤訊息]
+
+    我的環境是：
+    - 工具：[Claude Code / Cursor / 其他]
+    - 作業系統：[Mac / Windows / Linux]
+
+    請幫我分析可能的原因和解決方式。
+    ```
+  </Step>
+  <Step title="搜尋社群資源">
+    到以下地方尋找類似問題的解答：
+    - [Claude Code GitHub Issues](https://github.com/anthropics/claude-code/issues)
+    - [Anthropic Discord](https://discord.gg/anthropic)
+  </Step>
+  <Step title="回報問題">
+    如果確定是 Bug，可以到 GitHub 回報：
+    - 提供重現步驟
+    - 附上錯誤訊息
+    - 說明你的環境資訊
+  </Step>
+</Steps>
+
+---
+
+## 預防問題的好習慣
+
+<Info>
+**養成這些習慣，可以減少遇到問題的機會：**
+
+1. **建立 Skill 後立即測試** - 不要等到要用的時候才發現問題
+2. **保持檔案結構整潔** - 不要在 `.claude/skills/` 中放無關的檔案
+3. **定期備份重要的 Skill** - 避免意外刪除或覆蓋
+4. **API Key 妥善保管** - 不要分享或上傳到公開的地方
+5. **注意服務額度** - 設定用量提醒，避免突然無法使用
+</Info>
