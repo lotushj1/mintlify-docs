@@ -43,7 +43,8 @@
               {
                 "group": "實用範例",
                 "pages": [
-                  "skills/examples/newsletter-automation"
+                  "skills/examples/newsletter-automation",
+                  "skills/examples/notion-integration"
                 ]
               }
             ]

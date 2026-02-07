@@ -1,0 +1,428 @@
+---
+title: "Notion 串接應用"
+description: "學習如何串接 Notion，實現會議紀錄分析和音檔自動整理等實用功能"
+icon: "n"
+---
+
+這個教學會帶你學習如何將 Skill 與 Notion 串接，實現自動化的資料處理流程。
+
+---
+
+## 為什麼要串接 Notion？
+
+Notion 是許多人用來管理筆記、專案和知識庫的工具。透過串接 Skill，你可以：
+
+<CardGroup cols={2}>
+  <Card title="自動分析內容" icon="magnifying-glass-chart">
+    讓 AI 幫你分析會議紀錄、提取重點
+  </Card>
+  <Card title="自動整理資料" icon="folder-tree">
+    將外部資料自動整理並存入 Notion
+  </Card>
+  <Card title="格式轉換" icon="arrows-rotate">
+    將 Notion 內容轉換成其他格式輸出
+  </Card>
+  <Card title="批次處理" icon="layer-group">
+    一次處理多筆資料，節省時間
+  </Card>
+</CardGroup>
+
+---
+
+## 前置準備：設定 Notion API
+
+在開始之前，你需要先設定 Notion API 連接。
+
+### 步驟 1：建立 Notion Integration
+
+<Steps>
+  <Step title="前往 Notion 開發者頁面">
+    前往 [Notion Developers](https://www.notion.so/my-integrations) 並登入你的帳號
+  </Step>
+  <Step title="建立新的 Integration">
+    1. 點擊 **New integration**
+    2. 輸入名稱，例如「AI Assistant」
+    3. 選擇要連接的 Workspace
+    4. 點擊 **Submit** 建立
+  </Step>
+  <Step title="複製 API Token">
+    建立完成後，複製 **Internal Integration Token**（以 `secret_` 開頭）
+
+    <Warning>
+    請妥善保管這個 Token，不要分享給他人或上傳到公開的程式碼庫。
+    </Warning>
+  </Step>
+  <Step title="授權 Integration 存取頁面">
+    1. 開啟你想要讓 AI 存取的 Notion 頁面
+    2. 點擊右上角的 **...** 選單
+    3. 選擇 **Connections** → **Connect to** → 你剛建立的 Integration
+  </Step>
+</Steps>
+
+### 步驟 2：記錄必要資訊
+
+你需要準備以下資訊：
+
+| 項目 | 說明 | 範例 |
+|-----|------|------|
+| API Token | Integration 的密鑰 | `secret_abc123...` |
+| Database ID | 資料庫的 ID | `a1b2c3d4...` |
+| Page ID | 頁面的 ID | `e5f6g7h8...` |
+
+<Tip>
+**如何找到 Database/Page ID？**
+
+在 Notion 中開啟頁面，網址格式為：
+```
+https://www.notion.so/workspace/頁面標題-[ID]
+```
+最後的 32 個字元就是 ID。
+</Tip>
+
+---
+
+## 應用一：會議紀錄分析
+
+這個 Skill 可以自動分析 Notion 中的會議紀錄，提取重點和待辦事項。
+
+### 建立 Skill 檔案
+
+在 `.claude/skills/` 資料夾中建立 `meeting-analysis.md`：
+
+```markdown
+---
+description: 分析 Notion 中的會議紀錄
+---
+
+請幫我分析會議紀錄並提取重點。
+
+## 任務說明
+
+我會提供 Notion 會議紀錄的內容，請幫我：
+
+### 1. 會議摘要
+用 3-5 句話總結這場會議的主要內容。
+
+### 2. 關鍵決策
+列出會議中做出的所有決策，格式：
+- **決策內容**：[決策說明]
+- **負責人**：[如果有提到]
+- **時限**：[如果有提到]
+
+### 3. 待辦事項
+提取所有提到的待辦事項，格式：
+- [ ] [待辦事項內容] - @[負責人] - [截止日期]
+
+### 4. 重要討論點
+列出會議中討論的重要議題和不同觀點。
+
+### 5. 下次會議建議
+根據這次會議內容，建議下次會議應該討論什麼。
+
+## 輸出格式
+
+請使用 Markdown 格式輸出，方便我直接貼回 Notion。
+```
+
+### 使用方式
+
+#### 方法一：直接貼上內容
+
+1. 從 Notion 複製會議紀錄內容
+2. 在 Claude 中輸入：
+   ```
+   /meeting-analysis
+
+   [貼上會議紀錄內容]
+   ```
+
+#### 方法二：搭配 Notion MCP
+
+如果你有設定 [Notion MCP](https://github.com/makenotion/notion-mcp-server)，可以直接讀取：
+
+```
+/meeting-analysis
+
+請從我的 Notion 讀取「2024/02/07 週會紀錄」這個頁面的內容來分析
+```
+
+### 範例輸出
+
+```markdown
+## 會議摘要
+
+本次會議主要討論了 Q2 產品路線圖，確認了三個主要功能的優先順序，
+並針對資源分配達成共識。團隊同意將「用戶儀表板改版」列為最高優先級。
+
+## 關鍵決策
+
+- **決策內容**：Q2 優先開發用戶儀表板改版
+- **負責人**：產品團隊
+- **時限**：4 月底完成設計稿
+
+- **決策內容**：暫緩 API v3 開發
+- **負責人**：工程團隊
+- **時限**：延至 Q3
+
+## 待辦事項
+
+- [ ] 完成儀表板 wireframe - @小明 - 2/15
+- [ ] 準備用戶研究報告 - @小華 - 2/20
+- [ ] 更新專案時程表 - @PM - 2/10
+
+## 重要討論點
+
+1. **資源分配**：工程團隊提出人力不足的擔憂，建議縮小 MVP 範圍
+2. **用戶回饋**：根據最近的調查，60% 用戶反映儀表板難以使用
+
+## 下次會議建議
+
+- 檢視 wireframe 初稿
+- 確認技術可行性評估結果
+```
+
+---
+
+## 應用二：音檔自動整理
+
+這個 Skill 可以將錄音內容轉換成文字，並自動整理到 Notion 中。
+
+### 前置準備
+
+音檔處理需要先將錄音轉成文字。你可以使用：
+
+| 工具 | 說明 | 適合情境 |
+|-----|------|---------|
+| Whisper | OpenAI 的語音辨識模型 | 高準確度需求 |
+| 內建語音輸入 | macOS/Windows 內建功能 | 快速簡單 |
+| 第三方服務 | Otter.ai、雅婷逐字稿等 | 中文優化 |
+
+### 建立 Skill 檔案
+
+在 `.claude/skills/` 資料夾中建立 `audio-to-notion.md`：
+
+```markdown
+---
+description: 將音檔逐字稿整理成 Notion 格式
+---
+
+請幫我將錄音逐字稿整理成結構化的 Notion 頁面內容。
+
+## 輸入內容
+
+我會提供錄音的逐字稿（可能包含語音辨識的錯誤），請幫我：
+
+### 1. 修正與潤飾
+- 修正明顯的語音辨識錯誤
+- 移除口語贅詞（嗯、啊、那個）
+- 保持原意，讓文字更通順
+
+### 2. 結構化整理
+
+根據內容類型，整理成適當的格式：
+
+**如果是會議錄音：**
+- 會議資訊（日期、參與者）
+- 討論主題
+- 各議題的討論內容
+- 結論與待辦事項
+
+**如果是訪談錄音：**
+- 訪談資訊
+- Q&A 格式整理
+- 重點摘要
+
+**如果是個人筆記/想法：**
+- 主題分類
+- 重點條列
+- 延伸思考
+
+### 3. 輸出格式
+
+請使用 Notion 支援的 Markdown 格式，包含：
+- 適當的標題層級（H1, H2, H3）
+- 條列式重點
+- Toggle 區塊（用於詳細內容）
+- Callout 區塊（用於重要提醒）
+
+## 額外要求
+
+- 如果聽不清楚或不確定的內容，用 [?] 標記
+- 保留專有名詞的原始說法
+- 時間戳記如果有提供，請保留
+```
+
+### 完整工作流程
+
+<Steps>
+  <Step title="錄製或取得音檔">
+    - 使用手機或電腦錄製會議/訪談
+    - 或從其他來源取得音檔
+  </Step>
+  <Step title="轉換成逐字稿">
+    **使用 Whisper（推薦）：**
+    ```bash
+    # 安裝 whisper
+    pip install openai-whisper
+
+    # 轉換音檔
+    whisper meeting.mp3 --language Chinese --output_format txt
+    ```
+
+    **或使用線上服務：**
+    - 上傳到 Otter.ai 或雅婷逐字稿
+    - 下載文字檔
+  </Step>
+  <Step title="使用 Skill 整理">
+    ```
+    /audio-to-notion
+
+    [貼上逐字稿內容]
+    ```
+  </Step>
+  <Step title="貼到 Notion">
+    將整理好的內容複製到 Notion 頁面
+  </Step>
+</Steps>
+
+### 進階：自動化腳本
+
+如果你經常需要處理音檔，可以建立自動化腳本：
+
+```bash
+#!/bin/bash
+# audio-to-notion.sh
+
+# 1. 轉換音檔為文字
+echo "正在轉換音檔..."
+whisper "$1" --language Chinese --output_format txt
+
+# 2. 讀取逐字稿
+TRANSCRIPT=$(cat "${1%.*}.txt")
+
+# 3. 使用 Claude 處理（需要 Claude CLI）
+echo "正在整理內容..."
+claude "/audio-to-notion
+
+$TRANSCRIPT"
+```
+
+使用方式：
+```bash
+./audio-to-notion.sh meeting-recording.mp3
+```
+
+---
+
+## 應用三：Notion 內容格式轉換
+
+這個 Skill 可以將 Notion 內容轉換成其他格式。
+
+### 建立 Skill 檔案
+
+在 `.claude/skills/` 資料夾中建立 `notion-transform.md`：
+
+```markdown
+---
+description: 將 Notion 內容轉換成指定格式
+---
+
+請幫我將 Notion 內容轉換格式。
+
+## 支援的轉換類型
+
+根據我指定的目標格式進行轉換：
+
+### 轉換成簡報大綱
+- 提取主要標題作為投影片標題
+- 每個段落整理成 3-5 個重點
+- 建議適合的視覺元素
+
+### 轉換成電子郵件
+- 撰寫正式/非正式版本
+- 包含主旨建議
+- 適當的開頭和結尾
+
+### 轉換成社群貼文
+- 精簡成適合社群的長度
+- 加入適當的 emoji
+- 建議 hashtag
+
+### 轉換成部落格文章
+- 加入引言和結論
+- 優化 SEO 標題
+- 建議配圖方向
+
+## 使用方式
+
+請告訴我：
+1. 要轉換的內容
+2. 目標格式
+3. 任何特殊要求（語氣、長度等）
+```
+
+### 使用範例
+
+```
+/notion-transform
+
+請將以下產品規格文件轉換成給客戶看的簡報大綱：
+
+[貼上 Notion 內容]
+
+目標：5-7 張投影片，強調產品優勢
+```
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="如何處理長時間的錄音？">
+    建議將長錄音分段處理：
+    1. 使用音訊編輯軟體分割成 10-15 分鐘的段落
+    2. 分別轉換成逐字稿
+    3. 依序使用 Skill 整理
+    4. 最後合併成完整文件
+  </Accordion>
+
+  <Accordion title="中文語音辨識不準確怎麼辦？">
+    幾個建議：
+    - 使用專門針對中文優化的服務（如雅婷逐字稿）
+    - 在 Skill 中請 Claude 協助修正常見的辨識錯誤
+    - 錄音時盡量在安靜環境，說話清晰
+  </Accordion>
+
+  <Accordion title="可以直接讓 AI 存取我的 Notion 嗎？">
+    可以！設定 Notion MCP Server 後，AI 可以直接讀取和寫入 Notion：
+    - [Notion MCP Server](https://github.com/makenotion/notion-mcp-server)
+
+    設定完成後，你可以說：「請幫我讀取 Notion 中的 XX 頁面」
+  </Accordion>
+
+  <Accordion title="如何自動將結果存回 Notion？">
+    目前需要手動複製貼上。如果想要完全自動化，可以：
+    1. 使用 Notion API 搭配腳本
+    2. 使用 Zapier/Make 等自動化工具
+    3. 設定 Notion MCP 讓 AI 直接寫入
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 延伸學習
+
+<CardGroup cols={2}>
+  <Card title="Notion API 文件" icon="book" href="https://developers.notion.com/">
+    了解更多 Notion API 功能
+  </Card>
+  <Card title="Notion MCP Server" icon="plug" href="https://github.com/makenotion/notion-mcp-server">
+    讓 AI 直接存取 Notion
+  </Card>
+  <Card title="Whisper 使用教學" icon="microphone" href="https://github.com/openai/whisper">
+    OpenAI 語音辨識工具
+  </Card>
+  <Card title="自動化電子報系統" icon="envelope" href="/skills/examples/newsletter-automation">
+    另一個實用的 Skill 範例
+  </Card>
+</CardGroup>
