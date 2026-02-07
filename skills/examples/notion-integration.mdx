@@ -1,16 +1,16 @@
 ---
 title: "Notion 串接應用"
-description: "學習如何使用 Whisper 將音檔轉成會議紀錄，並整理到 Notion 中"
+description: "學習如何將音檔自動轉換成會議紀錄，並自動儲存到 Notion Database"
 icon: "n"
 ---
 
-這個教學會帶你學習如何將音檔轉換成會議紀錄，並自動整理到 Notion 中。
+這個教學會帶你學習如何建立一個自動化流程：只需要提供音檔位置，系統就會自動將音檔轉換成會議紀錄，並儲存到 Notion Database 中。
 
 <Info>
 **本教學會使用到的工具：**
 - **OpenAI Whisper API** - 語音轉文字
 - **Claude** - 整理會議內容
-- **Notion** - 儲存會議紀錄
+- **Notion MCP Server** - 自動化串接 Notion
 
 請確保你已經準備好這些工具的 API Key。
 </Info>
@@ -82,6 +82,76 @@ icon: "n"
 
 ---
 
+## 建立 Notion 會議紀錄 Database
+
+在開始自動化流程之前，你需要在 Notion 中建立一個專門管理會議紀錄的 Database。
+
+### 步驟 1：建立 Page 並授權 Integration
+
+<Steps>
+  <Step title="建立新的 Page">
+    在 Notion 中建立一個新的 Page，命名為「會議紀錄」或你喜歡的名稱
+  </Step>
+  <Step title="授權 Integration 存取">
+    1. 點擊頁面右上角的 **...** 選單
+    2. 選擇 **Connections**
+    3. 點擊 **Connect to** → 選擇你在前置準備中建立的 Integration（例如「會議紀錄助手」）
+
+    <Warning>
+    **重要**：必須先完成授權，AI 才能存取這個頁面並建立 Database。
+    </Warning>
+  </Step>
+  <Step title="取得 Page ID">
+    複製頁面的網址，網址格式類似：
+    ```
+    https://www.notion.so/你的工作區/會議紀錄-abc123def456...
+    ```
+
+    其中 `abc123def456...` 這串就是 Page ID，請記下來備用。
+  </Step>
+</Steps>
+
+### 步驟 2：讓 AI 協助建立 Database
+
+當你完成授權後，可以請 AI 在這個 Page 中建立符合格式的 Database。
+
+複製以下提示詞，貼到 Claude 對話框中：
+
+```text
+請在我的 Notion 頁面中建立一個會議紀錄 Database。
+
+Page ID：[貼上你的 Page ID]
+
+Database 需要包含以下欄位：
+1. 標題（Title）：會議主題
+2. 日期（Date）：會議日期
+3. 參與者（Multi-select）：參與人員
+4. 狀態（Select）：待整理 / 已完成 / 需追蹤
+5. 摘要（Text）：會議摘要
+6. 待辦事項（Text）：行動項目清單
+7. 會議內容（Text）：完整的會議紀錄
+
+請建立這個 Database，並將 Database ID 告訴我。
+```
+
+<Tip>
+**Database 建立完成後**，AI 會提供 Database ID，請記下來。後續的自動化流程會使用這個 ID 來新增會議紀錄。
+</Tip>
+
+### Database 欄位說明
+
+| 欄位名稱 | 類型 | 用途 |
+|---------|------|------|
+| 會議主題 | Title | Database 的標題欄位，顯示會議名稱 |
+| 日期 | Date | 記錄會議舉行的日期 |
+| 參與者 | Multi-select | 可選擇多位參與者，方便篩選 |
+| 狀態 | Select | 追蹤會議紀錄的處理狀態 |
+| 摘要 | Text | 簡短的會議重點摘要 |
+| 待辦事項 | Text | 從會議中整理出的行動項目 |
+| 會議內容 | Text | 完整的結構化會議紀錄 |
+
+---
+
 ## 快速開始：一鍵建置提示詞
 
 <Note>
@@ -93,194 +163,87 @@ icon: "n"
 複製以下內容，貼到 Claude 對話框：
 
 ```text
-請幫我在專案中建立一個 Skill，用來整理會議錄音的逐字稿。
+請幫我在專案中建立一個 Skill，用來處理會議錄音並自動儲存到 Notion。
 
-請在 .claude/skills/ 資料夾中建立 meeting-transcribe.md 檔案，內容需要包含：
+請在 .claude/skills/ 資料夾中建立 meeting-to-notion.md 檔案，內容需要包含：
 
-1. 修正語音辨識錯誤和口語贅詞
-2. 整理成結構化的會議紀錄格式，包含：
-   - 會議資訊（日期、參與者）
-   - 會議摘要（3-5 句話）
-   - 討論議題和內容
-   - 關鍵決策
-   - 待辦事項（使用 checkbox 格式）
-   - 下次會議建議
-3. 輸出使用 Notion 支援的 Markdown 格式
+## Skill 功能
+這個 Skill 會執行以下完整流程：
+1. 使用 Whisper API 將音檔轉換成逐字稿
+2. 整理成結構化的會議紀錄格式
+3. 自動將結果儲存到指定的 Notion Database
+
+## 會議紀錄格式
+- 會議資訊（日期、參與者）
+- 會議摘要（3-5 句話）
+- 討論議題和內容
+- 關鍵決策
+- 待辦事項（使用 checkbox 格式）
+- 下次會議建議
+
+## Notion 設定
+Database ID：[填入你的 Database ID]
 
 請直接建立這個檔案。
 ```
 
-### 提示詞二：設定 Whisper 轉換環境
+### 提示詞二：處理音檔並自動儲存到 Notion
 
 複製以下內容，貼到 Claude 對話框：
 
 ```text
-請幫我設定 Whisper 語音轉文字的環境。
-
-1. 檢查是否已安裝 Python 和 pip
-2. 安裝 openai 套件
-3. 建立一個 Python 腳本 whisper_transcribe.py，功能是：
-   - 讀取音檔路徑作為參數
-   - 使用 OpenAI Whisper API 轉換成文字
-   - 將結果儲存為 .txt 檔案
-   - 支援中文語音辨識
-
-我的 OpenAI API Key 是：[在這裡貼上你的 API Key]
-
-請直接建立這個腳本。
-```
-
-### 提示詞三：完整的音檔轉會議紀錄流程
-
-複製以下內容，貼到 Claude 對話框：
-
-```text
-請幫我處理會議錄音檔案。
+請幫我處理會議錄音檔案，並自動儲存到 Notion。
 
 音檔位置：[輸入你的音檔路徑，例如 ~/Downloads/meeting.mp3]
 
 請執行以下步驟：
 1. 使用 Whisper API 將音檔轉換成文字
-2. 使用 /meeting-transcribe Skill 整理成會議紀錄格式
-3. 顯示整理好的結果，讓我可以複製到 Notion
+2. 使用 /meeting-to-notion Skill 整理成會議紀錄格式
+3. 自動將整理好的會議紀錄儲存到 Notion Database
 
-如果過程中有任何錯誤，請告訴我如何解決。
+完成後請告訴我 Notion 頁面的連結。
 ```
 
 ---
 
-## 詳細教學：使用 Whisper 轉換音檔
+## 建立 Skill：自動化會議紀錄
 
-### 步驟 1：安裝必要套件
+### Skill 檔案內容
 
-在終端機中執行：
-
-```bash
-pip install openai
-```
-
-### 步驟 2：設定 API Key
-
-<Tabs>
-  <Tab title="macOS / Linux">
-    在 `~/.bashrc` 或 `~/.zshrc` 中加入：
-
-    ```bash
-    export OPENAI_API_KEY="sk-你的API金鑰"
-    ```
-
-    然後執行：
-    ```bash
-    source ~/.bashrc  # 或 source ~/.zshrc
-    ```
-  </Tab>
-  <Tab title="Windows">
-    在 PowerShell 中設定：
-
-    ```powershell
-    [Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-你的API金鑰", "User")
-    ```
-
-    需要重新開啟 PowerShell 生效。
-  </Tab>
-</Tabs>
-
-### 步驟 3：建立轉換腳本
-
-建立 `whisper_transcribe.py` 檔案：
-
-```python
-import sys
-import os
-from openai import OpenAI
-
-def transcribe_audio(audio_path):
-    """使用 Whisper API 將音檔轉換成文字"""
-
-    # 檢查檔案是否存在
-    if not os.path.exists(audio_path):
-        print(f"錯誤：找不到檔案 {audio_path}")
-        return None
-
-    # 初始化 OpenAI 客戶端
-    client = OpenAI()
-
-    print(f"正在轉換：{audio_path}")
-    print("這可能需要幾分鐘，請稍候...")
-
-    # 開啟音檔並進行轉換
-    with open(audio_path, "rb") as audio_file:
-        transcript = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            language="zh",  # 指定中文
-            response_format="text"
-        )
-
-    # 儲存結果
-    output_path = audio_path.rsplit(".", 1)[0] + ".txt"
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(transcript)
-
-    print(f"轉換完成！結果已儲存至：{output_path}")
-    return transcript
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("使用方式：python whisper_transcribe.py <音檔路徑>")
-        print("範例：python whisper_transcribe.py meeting.mp3")
-        sys.exit(1)
-
-    audio_path = sys.argv[1]
-    result = transcribe_audio(audio_path)
-
-    if result:
-        print("\n--- 轉換結果預覽 ---")
-        print(result[:500] + "..." if len(result) > 500 else result)
-```
-
-### 步驟 4：執行轉換
-
-```bash
-python whisper_transcribe.py your-meeting.mp3
-```
-
-轉換完成後，會生成一個 `.txt` 檔案，包含逐字稿內容。
-
----
-
-## 整理會議紀錄：建立 Skill
-
-### 建立 Skill 檔案
-
-在專案中建立 `.claude/skills/meeting-transcribe.md`：
+在專案中建立 `.claude/skills/meeting-to-notion.md`：
 
 ```markdown
 ---
-description: 將會議逐字稿整理成結構化的會議紀錄
+description: 將會議音檔轉換成會議紀錄並自動儲存到 Notion
 ---
 
-請幫我將會議錄音的逐字稿整理成結構化的會議紀錄。
+請幫我處理會議錄音，並將整理好的會議紀錄儲存到 Notion Database。
 
-## 處理步驟
+## 完整處理流程
 
-### 1. 修正與潤飾
+### 步驟 1：音檔轉文字
+使用 Whisper API 將音檔轉換成逐字稿：
+- 讀取指定的音檔
+- 使用 OpenAI Whisper API 進行語音辨識
+- 語言設定為中文（zh）
+
+### 步驟 2：整理會議紀錄
+將逐字稿整理成結構化格式：
 - 修正明顯的語音辨識錯誤
 - 移除口語贅詞（嗯、啊、那個、然後）
-- 保持原意，讓文字更通順
+- 提取會議資訊（日期、參與者、主題）
 
-### 2. 提取會議資訊
-- 會議日期和時間（如果有提到）
-- 參與者名單
-- 會議主題
+### 步驟 3：儲存到 Notion
+自動將會議紀錄儲存到 Notion Database：
+- Database ID：[你的 Database ID]
+- 填入各欄位資料
 
-### 3. 整理成以下格式
+## 會議紀錄格式
 
-## 📋 會議紀錄
-
-**日期**：[日期]
-**參與者**：[參與者列表]
-**主題**：[會議主題]
+### 會議資訊
+- **日期**：[從內容推測或使用今天日期]
+- **參與者**：[列出所有提到的人名]
+- **主題**：[會議主要討論主題]
 
 ### 會議摘要
 [用 3-5 句話總結這場會議的主要內容]
@@ -309,19 +272,9 @@ description: 將會議逐字稿整理成結構化的會議紀錄
 
 ## 輸出要求
 - 使用繁體中文
-- 使用 Notion 支援的 Markdown 格式
 - 不確定的內容用 [?] 標記
 - 保留專有名詞和人名
-```
-
-### 使用 Skill 整理逐字稿
-
-在 Claude 中輸入：
-
-```
-/meeting-transcribe
-
-[貼上 Whisper 轉換後的逐字稿內容]
+- 完成後提供 Notion 頁面連結
 ```
 
 ---
@@ -329,43 +282,65 @@ description: 將會議逐字稿整理成結構化的會議紀錄
 ## 完整工作流程
 
 <Steps>
+  <Step title="建立 Notion Database">
+    按照教學建立一個 Page，授權 Integration 存取，並請 AI 建立會議紀錄 Database
+  </Step>
+  <Step title="建立 Skill">
+    建立 meeting-to-notion Skill，並填入你的 Database ID
+  </Step>
   <Step title="錄製會議">
     使用手機或電腦錄製會議，建議使用安靜的環境以提高辨識準確度
   </Step>
-  <Step title="使用 Whisper 轉換">
-    ```bash
-    python whisper_transcribe.py meeting.mp3
+  <Step title="執行自動化流程">
+    告訴 AI 音檔位置，使用 `/meeting-to-notion` Skill：
+    ```
+    /meeting-to-notion
+
+    音檔位置：~/Downloads/meeting.mp3
     ```
   </Step>
-  <Step title="使用 Skill 整理">
-    將逐字稿貼到 Claude，使用 `/meeting-transcribe` Skill 整理
-  </Step>
-  <Step title="複製到 Notion">
-    將整理好的會議紀錄複製到 Notion 頁面
+  <Step title="確認結果">
+    AI 會自動完成語音轉文字、整理會議紀錄、儲存到 Notion，並提供頁面連結讓你確認
   </Step>
 </Steps>
 
 ---
 
-## 進階：自動化腳本
+## 進階設定：Notion MCP Server
 
-如果你經常需要處理會議錄音，可以建立一個一鍵完成的腳本：
+為了讓 AI 能夠直接存取和操作 Notion，建議安裝 Notion MCP Server。
 
-### 提示詞：建立自動化腳本
+### 安裝步驟
 
-複製以下內容，貼到 Claude 對話框：
+<Steps>
+  <Step title="安裝 Notion MCP Server">
+    在 Claude 設定中加入 Notion MCP Server：
 
-```text
-請幫我建立一個自動化腳本 process_meeting.sh，功能是：
+    ```json
+    {
+      "mcpServers": {
+        "notion": {
+          "command": "npx",
+          "args": ["-y", "@notionhq/notion-mcp-server"],
+          "env": {
+            "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer secret_你的Token\", \"Notion-Version\": \"2022-06-28\"}"
+          }
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="替換 Token">
+    將 `secret_你的Token` 替換成你在前置準備中取得的 Notion Integration Token
+  </Step>
+  <Step title="重新啟動 Claude">
+    設定完成後重新啟動 Claude，讓 MCP Server 生效
+  </Step>
+</Steps>
 
-1. 接收音檔路徑作為參數
-2. 使用 whisper_transcribe.py 轉換音檔
-3. 讀取轉換後的 .txt 檔案
-4. 自動呼叫 Claude 使用 /meeting-transcribe Skill 整理
-5. 將結果輸出到終端機
-
-請確保腳本有適當的錯誤處理和進度提示。
-```
+<Tip>
+安裝 MCP Server 後，AI 就可以直接讀取和寫入 Notion，不需要你手動複製貼上任何內容。
+</Tip>
 
 ---
 
@@ -390,6 +365,14 @@ description: 將會議逐字稿整理成結構化的會議紀錄
 ## 常見問題
 
 <AccordionGroup>
+  <Accordion title="AI 無法存取 Notion 怎麼辦？">
+    請確認以下事項：
+    - Notion Integration 已正確建立
+    - 目標頁面已授權給 Integration（點擊 ... → Connections）
+    - MCP Server 設定中的 Token 正確無誤
+    - 已重新啟動 Claude 讓設定生效
+  </Accordion>
+
   <Accordion title="API Key 錯誤怎麼辦？">
     常見錯誤和解決方式：
     - **Invalid API Key**：確認 API Key 正確，沒有多餘的空格
@@ -418,6 +401,13 @@ description: 將會議逐字稿整理成結構化的會議紀錄
     ```bash
     ffmpeg -i input.ogg output.mp3
     ```
+  </Accordion>
+
+  <Accordion title="如何修改 Database 欄位？">
+    如果你想要調整 Database 的欄位，可以：
+    1. 直接在 Notion 中手動修改 Database 結構
+    2. 請 AI 協助修改：「請幫我在 Database 新增一個『會議類型』欄位」
+    3. 記得同步更新 Skill 中的格式說明
   </Accordion>
 </AccordionGroup>
 
