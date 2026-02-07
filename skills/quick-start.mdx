@@ -1,0 +1,281 @@
+---
+title: "快速開始"
+description: "5 分鐘內體驗 Skill 的魔力，立即上手！"
+icon: "rocket"
+---
+
+## 30 秒了解 Skill
+
+<Note>
+**Skill 就是你教給 AI 的「快捷指令」。**
+
+就像手機上的快捷鍵一樣，設定好一次，以後只要按一下就能執行複雜的操作。
+</Note>
+
+```
+沒有 Skill：每次都要打一長串指令解釋你要什麼
+有了 Skill：只要輸入 /skill名稱，AI 就知道該怎麼做
+```
+
+---
+
+## 立即體驗：你的第一個 Skill
+
+讓我們用最簡單的方式，在 2 分鐘內建立你的第一個 Skill。
+
+<Steps>
+  <Step title="開啟 Claude">
+    開啟 Claude Code、Claude Desktop 或任何你使用的 AI 工具
+  </Step>
+  <Step title="複製貼上這段文字">
+    把以下內容完整複製，貼到對話框中送出：
+
+    ```text
+    請幫我建立一個 Skill。
+
+    在 .claude/skills/ 資料夾中建立 summarize.md 檔案，內容如下：
+
+    ---
+    description: 快速摘要任何內容
+    ---
+
+    請幫我摘要以下內容：
+
+    ## 摘要要求
+    1. 用 3-5 個重點條列
+    2. 每個重點不超過 20 字
+    3. 最後加上「一句話總結」
+
+    ## 輸出格式
+    ### 重點摘要
+    - 重點一
+    - 重點二
+    - ...
+
+    ### 一句話總結
+    [總結內容]
+    ```
+  </Step>
+  <Step title="測試你的 Skill">
+    建立完成後，試試看輸入：
+
+    ```
+    /summarize
+
+    人工智慧（AI）正在改變我們的工作方式。根據最新研究，
+    超過 60% 的企業已經在某種程度上採用 AI 技術。
+    AI 可以幫助自動化重複性工作、分析大量數據、
+    以及提供個人化的客戶服務。然而，企業在導入 AI 時
+    也面臨挑戰，包括人才短缺、數據品質問題，
+    以及員工對新技術的適應等。
+    ```
+
+    AI 會自動用你設定的格式來摘要內容！
+  </Step>
+</Steps>
+
+<Tip>
+**恭喜！** 你已經建立了第一個 Skill。以後只要輸入 `/summarize` 加上任何內容，AI 就會用同樣的格式幫你摘要。
+</Tip>
+
+---
+
+## 3 個立即可用的 Skill
+
+以下是 3 個實用的 Skill，你可以直接複製使用。
+
+### 1. 待辦事項整理器
+
+把雜亂的筆記變成清楚的待辦清單。
+
+<Accordion title="點擊展開 Skill 內容">
+複製以下內容，請 Claude 幫你建立：
+
+```text
+請幫我建立一個 Skill。
+
+在 .claude/skills/ 資料夾中建立 todo.md 檔案，內容如下：
+
+---
+description: 將內容整理成待辦事項清單
+---
+
+請幫我把以下內容整理成待辦事項清單：
+
+## 整理規則
+1. 找出所有需要執行的動作
+2. 按照優先順序排列（緊急 → 重要 → 一般）
+3. 如果有提到時間，加上截止日期
+
+## 輸出格式
+
+### 緊急（今天要做）
+- [ ] 待辦事項 - 截止日期（如果有）
+
+### 重要（本週要做）
+- [ ] 待辦事項
+
+### 一般（之後再做）
+- [ ] 待辦事項
+
+如果內容中沒有明確的待辦事項，請回覆：「這段內容中沒有找到具體的待辦事項。」
+```
+
+**使用方式**：`/todo [貼上你的筆記或會議記錄]`
+</Accordion>
+
+### 2. Email 回覆助手
+
+幫你快速撰寫專業的 Email 回覆。
+
+<Accordion title="點擊展開 Skill 內容">
+複製以下內容，請 Claude 幫你建立：
+
+```text
+請幫我建立一個 Skill。
+
+在 .claude/skills/ 資料夾中建立 reply-email.md 檔案，內容如下：
+
+---
+description: 幫助撰寫專業的 Email 回覆
+---
+
+請幫我撰寫一封 Email 回覆。
+
+## 回覆原則
+1. 語氣專業但親切
+2. 先感謝對方來信
+3. 直接回應對方的問題或需求
+4. 如果需要時間處理，說明預計回覆時間
+5. 結尾保持禮貌
+
+## 輸出格式
+
+**主旨**：Re: [原始主旨]
+
+---
+
+[稱呼]，
+
+[回覆內容]
+
+[結尾問候]
+[你的名字]
+
+---
+
+請根據以下原始 Email 內容撰寫回覆：
+```
+
+**使用方式**：`/reply-email [貼上收到的 Email 內容]`
+</Accordion>
+
+### 3. 學習筆記整理
+
+把學習內容整理成好複習的筆記格式。
+
+<Accordion title="點擊展開 Skill 內容">
+複製以下內容，請 Claude 幫你建立：
+
+```text
+請幫我建立一個 Skill。
+
+在 .claude/skills/ 資料夾中建立 study-notes.md 檔案，內容如下：
+
+---
+description: 將學習內容整理成結構化筆記
+---
+
+請幫我整理以下學習內容：
+
+## 整理方式
+1. 提取核心概念（用粗體標示）
+2. 列出重要定義
+3. 整理關鍵步驟或流程
+4. 找出容易混淆或需要特別注意的地方
+
+## 輸出格式
+
+# [主題名稱]
+
+## 核心概念
+- **概念一**：說明
+- **概念二**：說明
+
+## 重要定義
+| 名詞 | 定義 |
+|-----|------|
+| ... | ... |
+
+## 關鍵步驟
+1. 第一步
+2. 第二步
+...
+
+## 注意事項
+⚠️ [容易出錯或混淆的地方]
+
+## 快速複習
+用一段話總結這個主題的重點（50字內）
+```
+
+**使用方式**：`/study-notes [貼上課程內容、文章或書籍段落]`
+</Accordion>
+
+---
+
+## 下一步：根據你的需求選擇
+
+<CardGroup cols={2}>
+  <Card title="我想用現成的 Skill" icon="box-open" href="/skills/resources">
+    探索更多別人做好的 Skill，直接拿來用
+  </Card>
+  <Card title="我想自己做 Skill" icon="hammer" href="/skills/create-first-skill">
+    學習如何從零開始建立自己的 Skill
+  </Card>
+  <Card title="我想了解更多概念" icon="book" href="/skills/what-is-skill">
+    深入了解 Skill 是什麼、能做什麼
+  </Card>
+  <Card title="我想看實際應用" icon="lightbulb" href="/skills/examples/notion-integration">
+    看看 Skill 可以做到什麼程度
+  </Card>
+</CardGroup>
+
+---
+
+## 常見問題
+
+<AccordionGroup>
+  <Accordion title="Skill 建立後要怎麼找到它？">
+    在對話框中輸入 `/` 就會看到所有可用的 Skill 列表。
+
+    或者直接輸入 `/help` 查看說明。
+  </Accordion>
+
+  <Accordion title="我可以修改已經建立的 Skill 嗎？">
+    可以！找到 `.claude/skills/` 資料夾中對應的 `.md` 檔案，直接編輯內容，儲存後就會生效。
+  </Accordion>
+
+  <Accordion title="Skill 可以刪除嗎？">
+    可以，直接刪除 `.claude/skills/` 資料夾中對應的 `.md` 檔案即可。
+  </Accordion>
+
+  <Accordion title="為什麼輸入 / 後沒看到我的 Skill？">
+    請確認：
+    1. 檔案放在正確的位置（`.claude/skills/` 資料夾）
+    2. 檔案副檔名是 `.md`
+    3. 檔案開頭有正確的格式（`---` 包圍的 description）
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 小提醒
+
+<Info>
+**Skill 的威力在於「重複使用」**
+
+一開始花 2 分鐘建立一個 Skill，之後每次使用只要 2 秒鐘。
+
+如果你每天要做 5 次相同的事情，一個月下來可以省下好幾個小時！
+</Info>

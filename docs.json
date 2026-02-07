@@ -16,6 +16,7 @@
           {
             "group": "開始學習",
             "pages": [
+              "skills/quick-start",
               "skills/what-is-skill",
               "skills/basics"
             ]
@@ -62,7 +63,7 @@
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
-    "href": "/skills/what-is-skill"
+    "href": "/skills/quick-start"
   },
   "footer": {
     "socials": {
