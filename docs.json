@@ -41,6 +41,7 @@
             "group": "進階學習",
             "pages": [
               "skills/create-first-skill",
+              "skills/advanced-techniques",
               {
                 "group": "實用範例",
                 "pages": [

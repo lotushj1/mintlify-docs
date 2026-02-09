@@ -43,6 +43,57 @@ icon: "wrench"
 
 ---
 
+## Skill 上傳錯誤
+
+### 錯誤：Could not find SKILL.md in uploaded folder
+
+<Accordion title="原因和解決方式">
+**原因**：檔案沒有命名為 `SKILL.md`
+
+**解決方式**：
+- 將檔案重新命名為 `SKILL.md`（大小寫敏感）
+- 使用 `ls -la` 確認檔案名稱正確
+</Accordion>
+
+### 錯誤：Invalid frontmatter
+
+<Accordion title="原因和解決方式">
+**原因**：YAML 格式錯誤
+
+**常見錯誤**：
+```yaml
+# ❌ 錯誤 - 缺少分隔符號
+name: my-skill
+description: Does things
+
+# ❌ 錯誤 - 引號沒有閉合
+name: my-skill
+description: "Does things
+
+# ✅ 正確
+---
+name: my-skill
+description: Does things
+---
+```
+</Accordion>
+
+### 錯誤：Invalid skill name
+
+<Accordion title="原因和解決方式">
+**原因**：名稱有空格或大寫字母
+
+```yaml
+# ❌ 錯誤
+name: My Cool Skill
+
+# ✅ 正確
+name: my-cool-skill
+```
+</Accordion>
+
+---
+
 ## Skill 無法使用
 
 ### 問題：輸入 `/skill名稱` 沒有反應
@@ -116,6 +167,63 @@ icon: "wrench"
      - 重新啟動工具
      - 建立一個新的 Skill 測試（確認功能正常）
      - 檢查檔案是否有隱藏的特殊字元
+</Accordion>
+
+---
+
+## Skill 觸發問題
+
+### 問題：Skill 沒有在應該觸發時觸發（觸發不足）
+
+<Accordion title="症狀和解決方式">
+**症狀**：
+- Skill 在應該載入時沒有載入
+- 使用者需要手動啟用它
+- 關於「何時使用」的問題很多
+
+**解決方式**：在 description 中加入更多細節和觸發詞句
+
+```yaml
+# 修改前
+description: 幫助處理專案。
+
+# 修改後
+description: 建立完整的專案工作區，包含資料夾結構、設定檔和初始文件。當使用者說「建立新專案」、「初始化專案」、「設定專案」或「project setup」時使用。
+```
+
+**除錯方式**：
+詢問 Claude：「你什麼時候會使用 [skill name] Skill？」
+Claude 會引用 description 回答，根據缺少的內容調整。
+</Accordion>
+
+### 問題：Skill 在不相關的查詢時觸發（觸發過度）
+
+<Accordion title="症狀和解決方式">
+**症狀**：
+- Skill 為不相關的查詢載入
+- 使用者停用它
+- 對用途感到困惑
+
+**解決方式**：
+
+1. **加入否定觸發條件**
+```yaml
+description: 進階 CSV 檔案資料分析。用於統計建模、迴歸、聚類。不要用於簡單的資料探索（改用 data-viz Skill）。
+```
+
+2. **更具體地描述用途**
+```yaml
+# 太廣泛
+description: 處理文件
+
+# 更具體
+description: 處理 PDF 法律文件，進行合約審查
+```
+
+3. **釐清範圍**
+```yaml
+description: PayFlow 電子商務支付處理。專門用於線上支付工作流程，不適用於一般財務查詢。
+```
 </Accordion>
 
 ---
@@ -324,12 +432,100 @@ icon: "wrench"
   ```
 </Accordion>
 
+### 問題：指令沒有被遵循
+
+<AccordionGroup>
+  <Accordion title="原因 1：指令太冗長">
+    **解決方式**：
+    - 保持指令簡潔
+    - 使用條列式和編號列表
+    - 將詳細參考移到單獨的檔案
+  </Accordion>
+
+  <Accordion title="原因 2：重要指令被埋沒">
+    **解決方式**：
+    - 將關鍵指令放在最前面
+    - 使用 `## 重要` 或 `## 關鍵` 標題
+    - 必要時重複關鍵點
+
+    ```markdown
+    ## 重要：必須先執行
+
+    在進行任何操作之前，必須先驗證輸入資料。
+    ```
+  </Accordion>
+
+  <Accordion title="原因 3：語言模糊">
+    ```markdown
+    # ❌ 不好
+    確保適當地驗證東西
+
+    # ✅ 好
+    關鍵：在呼叫 create_project 之前，驗證：
+    - 專案名稱不為空
+    - 至少指派一位團隊成員
+    - 開始日期不在過去
+    ```
+  </Accordion>
+
+  <Accordion title="原因 4：模型「懶惰」">
+    有時候模型可能會跳過步驟。加入明確的鼓勵：
+
+    ```markdown
+    ## 效能注意事項
+
+    - 花時間徹底完成這件事
+    - 品質比速度更重要
+    - 不要跳過驗證步驟
+    ```
+
+    <Tip>
+    **提示**：將這些內容加到使用者提示比加在 SKILL.md 中更有效。
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## 大型上下文問題
+
+### 問題：Skill 似乎變慢或回應品質下降
+
+<Accordion title="原因和解決方式">
+**可能原因**：
+- Skill 內容太大
+- 同時啟用太多 Skill
+- 所有內容都被載入，而不是漸進式揭露
+
+**解決方式**：
+
+1. **優化 SKILL.md 大小**
+   - 將詳細文件移到 `references/`
+   - 使用連結而不是內嵌
+   - 保持 SKILL.md 在 5,000 字以內
+
+2. **減少啟用的 Skill 數量**
+   - 評估是否同時啟用超過 20-50 個 Skill
+   - 建議選擇性啟用
+   - 考慮將相關功能整合成 Skill「套件」
+
+3. **使用漸進式揭露**
+   ```markdown
+   ## 詳細說明
+
+   關於 API 使用的完整說明，請參考 `references/api-guide.md`。
+   ```
+</Accordion>
+
 ---
 
 ## 錯誤訊息對照表
 
 | 錯誤訊息 | 可能原因 | 快速解決 |
 |---------|---------|---------|
+| `Could not find SKILL.md` | 檔案名稱錯誤 | 重新命名為 `SKILL.md`（大小寫敏感）|
+| `Invalid frontmatter` | YAML 格式錯誤 | 確認有 `---` 分隔符號，引號正確閉合 |
+| `Invalid skill name` | 名稱有空格或大寫 | 使用 kebab-case（如 `my-skill`）|
 | `Skill not found` | 檔案位置或名稱錯誤 | 確認檔案在 `.claude/skills/` 中 |
 | `Invalid API Key` | API Key 錯誤 | 重新取得並設定 API Key |
 | `Insufficient quota` | 額度不足 | 加值或等待額度重置 |
@@ -338,6 +534,7 @@ icon: "wrench"
 | `Permission denied` | 沒有寫入權限 | 修改資料夾權限 |
 | `Connection timeout` | 網路問題 | 檢查網路連線 |
 | `Object not found` | ID 錯誤或物件不存在 | 確認 ID 正確且物件存在 |
+| `Validation error` | 資料格式不符 | 檢查必填欄位和格式要求 |
 
 ---
 
